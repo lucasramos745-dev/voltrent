@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltRent — Clientes</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <!-- ================================================
+       SIDEBAR
+       ================================================ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span>🛵 VoltRent</span>
+    </div>
+
+    <div class="sidebar-secao">Principal</div>
+    <nav>
+      <a href="dashboard.html">
+        <span class="icone">📊</span> Dashboard
+      </a>
+      <a href="clientes.html" class="ativo">
+        <span class="icone">👥</span> Clientes
+      </a>
+      <a href="equipamentos.html">
+        <span class="icone">🛵</span> Equipamentos
+      </a>
+      <a href="contratos.html">
+        <span class="icone">📋</span> Contratos
+      </a>
+    </nav>
+
+    <div class="sidebar-secao">Financeiro</div>
+    <nav>
+      <a href="financeiro.html">
+        <span class="icone">💰</span> Financeiro
+      </a>
+      <a href="orcamentos.html">
+        <span class="icone">📝</span> Orçamentos
+      </a>
+      <a href="notas.html">
+        <span class="icone">📄</span> Notas Promissórias
+      </a>
+    </nav>
+
+    <div class="sidebar-rodape">
+      <button id="btn-logout">🚪 Sair</button>
+    </div>
+  </aside>
+
+  <!-- ================================================
+       CONTEÚDO PRINCIPAL
+       ================================================ -->
+  <main class="conteudo">
+
+    <!-- Cabeçalho -->
+    <div class="pagina-header">
+      <div>
+        <h1 class="pagina-titulo">Clientes</h1>
+        <p class="pagina-subtitulo" id="total-clientes">Carregando...</p>
+      </div>
+      <button class="btn-primario" style="width:auto" id="btn-novo-cliente">
+        ➕ Novo Cliente
+      </button>
+    </div>
+
+    <!-- Tabela de clientes -->
+    <div class="tabela-wrapper">
+      <div class="tabela-header">
+        <h3>Lista de Clientes</h3>
+        <input
+          type="text"
+          class="busca-input"
+          id="busca-cliente"
+          placeholder="🔍 Buscar por nome ou CPF..."
+        >
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF / CNPJ</th>
+            <th>Telefone</th>
+            <th>Cidade</th>
+            <th>CNH</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-clientes">
+          <tr>
+            <td colspan="6">
+              <div class="estado-vazio">
+                <div class="icone-vazio">⏳</div>
+                <p>Carregando clientes...</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- ================================================
+       MODAL — CADASTRO / EDIÇÃO DE CLIENTE
+       ================================================ -->
+  <div class="modal-overlay" id="modal-cliente">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h3 id="modal-titulo">Novo Cliente</h3>
+        <button class="modal-fechar" id="btn-fechar-modal">✕</button>
+      </div>
+
+      <div class="modal-corpo">
+        <form id="form-cliente">
+
+          <div class="campos-grid">
+
+            <!-- Nome completo -->
+            <div class="campo campo-largo">
+              <label>Nome completo *</label>
+              <input type="text" id="campo-nome" placeholder="Ex: João da Silva" required>
+            </div>
+
+            <!-- CPF / CNPJ -->
+            <div class="campo">
+              <label>CPF / CNPJ *</label>
+              <input type="text" id="campo-cpf" placeholder="000.000.000-00" required>
+            </div>
+
+            <!-- Telefone -->
+            <div class="campo">
+              <label>Telefone / WhatsApp *</label>
+              <input type="tel" id="campo-telefone" placeholder="(27) 99999-9999" required>
+            </div>
+
+            <!-- Email -->
+            <div class="campo">
+              <label>Email</label>
+              <input type="email" id="campo-email" placeholder="email@exemplo.com">
+            </div>
+
+            <!-- CNH -->
+            <div class="campo">
+              <label>CNH (número)</label>
+              <input type="text" id="campo-cnh" placeholder="Opcional">
+            </div>
+
+            <!-- Endereço -->
+            <div class="campo campo-largo">
+              <label>Endereço</label>
+              <input type="text" id="campo-endereco" placeholder="Rua, número, bairro">
+            </div>
+
+            <!-- Cidade -->
+            <div class="campo">
+              <label>Cidade</label>
+              <input type="text" id="campo-cidade" placeholder="Ex: Ponto Belo">
+            </div>
+
+            <!-- Estado -->
+            <div class="campo">
+              <label>Estado</label>
+              <select id="campo-estado">
+                <option value="">Selecione...</option>
+                <option value="AC">AC</option><option value="AL">AL</option>
+                <option value="AP">AP</option><option value="AM">AM</option>
+                <option value="BA">BA</option><option value="CE">CE</option>
+                <option value="DF">DF</option><option value="ES">ES</option>
+                <option value="GO">GO</option><option value="MA">MA</option>
+                <option value="MT">MT</option><option value="MS">MS</option>
+                <option value="MG">MG</option><option value="PA">PA</option>
+                <option value="PB">PB</option><option value="PR">PR</option>
+                <option value="PE">PE</option><option value="PI">PI</option>
+                <option value="RJ">RJ</option><option value="RN">RN</option>
+                <option value="RS">RS</option><option value="RO">RO</option>
+                <option value="RR">RR</option><option value="SC">SC</option>
+                <option value="SP">SP</option><option value="SE">SE</option>
+                <option value="TO">TO</option>
+              </select>
+            </div>
+
+            <!-- Observações -->
+            <div class="campo campo-largo">
+              <label>Observações</label>
+              <textarea id="campo-obs" placeholder="Informações adicionais sobre o cliente..."></textarea>
+            </div>
+
+          </div>
+
+          <!-- Campo oculto para guardar o ID ao editar -->
+          <input type="hidden" id="campo-id">
+
+        </form>
+      </div>
+
+      <div class="modal-rodape">
+        <button class="btn-secundario" id="btn-cancelar">Cancelar</button>
+        <button class="btn-primario" id="btn-salvar" style="width:auto">💾 Salvar Cliente</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================================================
+       JAVASCRIPT
+       ================================================ -->
+  <script type="module">
+    import { protegerPagina, logout } from "./js/auth.js";
+    import { db } from "./js/firebase-config.js";
+    import { showToast } from "./js/utils.js";
+    import {
+      collection, getDocs, addDoc, updateDoc, deleteDoc,
+      doc, orderBy, query, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    protegerPagina();
+    document.getElementById("btn-logout").addEventListener("click", logout);
+
+    // ----------------------------------------
+    // Estado local
+    // ----------------------------------------
+    let todosClientes = []; // guarda todos para o filtro de busca
+
+    // ----------------------------------------
+    // Referência da coleção no Firestore
+    // ----------------------------------------
+    const colClientes = collection(db, "clientes");
+
+    // ----------------------------------------
+    // Carrega e exibe clientes
+    // ----------------------------------------
+    async function carregarClientes() {
+      try {
+        const snap = await getDocs(query(colClientes, orderBy("nome")));
+        todosClientes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderTabela(todosClientes);
+        document.getElementById("total-clientes").textContent =
+          `${todosClientes.length} cliente(s) cadastrado(s)`;
+      } catch (err) {
+        console.error("Erro ao carregar clientes:", err);
+        showToast("Erro ao carregar clientes.", "erro");
+      }
+    }
+
+    // ----------------------------------------
+    // Renderiza a tabela
+    // ----------------------------------------
+    function renderTabela(clientes) {
+      const tbody = document.getElementById("tabela-clientes");
+
+      if (clientes.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="estado-vazio">
+                <div class="icone-vazio">👥</div>
+                <p>Nenhum cliente encontrado. Clique em "Novo Cliente" para começar.</p>
+              </div>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = clientes.map(c => `
+        <tr>
+          <td>
+            <strong>${c.nome || "—"}</strong>
+            ${c.email ? `<br><span class="texto-pequeno texto-cinza">${c.email}</span>` : ""}
+          </td>
+          <td>${c.cpf || "—"}</td>
+          <td>
+            ${c.telefone
+              ? `<a href="https://wa.me/55${c.telefone.replace(/\D/g,'')}" target="_blank"
+                   style="color:var(--verde); text-decoration:none;">
+                   📱 ${c.telefone}
+                 </a>`
+              : "—"}
+          </td>
+          <td>${c.cidade ? `${c.cidade}${c.estado ? "/" + c.estado : ""}` : "—"}</td>
+          <td>${c.cnh ? `✅ ${c.cnh}` : '<span class="texto-cinza">Sem CNH</span>'}</td>
+          <td>
+            <div class="td-acoes">
+              <button class="btn-icon" title="Editar" onclick="editarCliente('${c.id}')">✏️</button>
+              <button class="btn-icon" title="WhatsApp" onclick="abrirWhatsApp('${c.telefone}', '${c.nome}')">💬</button>
+              <button class="btn-icon btn-perigo" title="Excluir" onclick="excluirCliente('${c.id}', '${c.nome}')">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    // ----------------------------------------
+    // Busca / filtro em tempo real
+    // ----------------------------------------
+    document.getElementById("busca-cliente").addEventListener("input", (e) => {
+      const termo = e.target.value.toLowerCase().trim();
+      if (!termo) {
+        renderTabela(todosClientes);
+        return;
+      }
+      const filtrados = todosClientes.filter(c =>
+        (c.nome  || "").toLowerCase().includes(termo) ||
+        (c.cpf   || "").toLowerCase().includes(termo) ||
+        (c.email || "").toLowerCase().includes(termo)
+      );
+      renderTabela(filtrados);
+    });
+
+    // ----------------------------------------
+    // Modal — abrir / fechar
+    // ----------------------------------------
+    function abrirModal(titulo = "Novo Cliente") {
+      document.getElementById("modal-titulo").textContent = titulo;
+      document.getElementById("modal-cliente").classList.add("aberto");
+    }
+
+    function fecharModal() {
+      document.getElementById("modal-cliente").classList.remove("aberto");
+      document.getElementById("form-cliente").reset();
+      document.getElementById("campo-id").value = "";
+    }
+
+    document.getElementById("btn-novo-cliente").addEventListener("click", () => abrirModal("Novo Cliente"));
+    document.getElementById("btn-fechar-modal").addEventListener("click", fecharModal);
+    document.getElementById("btn-cancelar").addEventListener("click", fecharModal);
+
+    // Fecha ao clicar fora do modal
+    document.getElementById("modal-cliente").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) fecharModal();
+    });
+
+    // ----------------------------------------
+    // Salvar (criar ou editar)
+    // ----------------------------------------
+    document.getElementById("btn-salvar").addEventListener("click", async () => {
+      const id       = document.getElementById("campo-id").value;
+      const nome     = document.getElementById("campo-nome").value.trim();
+      const cpf      = document.getElementById("campo-cpf").value.trim();
+      const telefone = document.getElementById("campo-telefone").value.trim();
+
+      // Validação básica
+      if (!nome || !cpf || !telefone) {
+        showToast("Preencha os campos obrigatórios: Nome, CPF e Telefone.", "aviso");
+        return;
+      }
+
+      const dados = {
+        nome,
+        cpf,
+        telefone,
+        email:    document.getElementById("campo-email").value.trim(),
+        cnh:      document.getElementById("campo-cnh").value.trim(),
+        endereco: document.getElementById("campo-endereco").value.trim(),
+        cidade:   document.getElementById("campo-cidade").value.trim(),
+        estado:   document.getElementById("campo-estado").value,
+        obs:      document.getElementById("campo-obs").value.trim(),
+      };
+
+      const btn = document.getElementById("btn-salvar");
+      btn.textContent = "Salvando...";
+      btn.disabled = true;
+
+      try {
+        if (id) {
+          // Editar cliente existente
+          await updateDoc(doc(db, "clientes", id), dados);
+          showToast("Cliente atualizado com sucesso!", "sucesso");
+        } else {
+          // Criar novo cliente
+          dados.dataCriacao = serverTimestamp();
+          await addDoc(colClientes, dados);
+          showToast("Cliente cadastrado com sucesso!", "sucesso");
+        }
+        fecharModal();
+        await carregarClientes();
+      } catch (err) {
+        console.error("Erro ao salvar cliente:", err);
+        showToast("Erro ao salvar. Tente novamente.", "erro");
+      } finally {
+        btn.textContent = "💾 Salvar Cliente";
+        btn.disabled = false;
+      }
+    });
+
+    // ----------------------------------------
+    // Editar cliente (preenche o modal)
+    // ----------------------------------------
+    window.editarCliente = function(id) {
+      const c = todosClientes.find(x => x.id === id);
+      if (!c) return;
+
+      document.getElementById("campo-id").value        = c.id;
+      document.getElementById("campo-nome").value      = c.nome      || "";
+      document.getElementById("campo-cpf").value       = c.cpf       || "";
+      document.getElementById("campo-telefone").value  = c.telefone  || "";
+      document.getElementById("campo-email").value     = c.email     || "";
+      document.getElementById("campo-cnh").value       = c.cnh       || "";
+      document.getElementById("campo-endereco").value  = c.endereco  || "";
+      document.getElementById("campo-cidade").value    = c.cidade    || "";
+      document.getElementById("campo-estado").value    = c.estado    || "";
+      document.getElementById("campo-obs").value       = c.obs       || "";
+
+      abrirModal("Editar Cliente");
+    };
+
+    // ----------------------------------------
+    // Excluir cliente
+    // ----------------------------------------
+    window.excluirCliente = async function(id, nome) {
+      if (!confirm(`Tem certeza que deseja excluir o cliente "${nome}"?\n\nEsta ação não pode ser desfeita.`)) return;
+
+      try {
+        await deleteDoc(doc(db, "clientes", id));
+        showToast("Cliente excluído.", "sucesso");
+        await carregarClientes();
+      } catch (err) {
+        console.error("Erro ao excluir:", err);
+        showToast("Erro ao excluir cliente.", "erro");
+      }
+    };
+
+    // ----------------------------------------
+    // Abrir WhatsApp
+    // ----------------------------------------
+    window.abrirWhatsApp = function(telefone, nome) {
+      if (!telefone) {
+        showToast("Este cliente não tem telefone cadastrado.", "aviso");
+        return;
+      }
+      const tel = telefone.replace(/\D/g, "");
+      const msg = `Olá, *${nome}*! Entro em contato da VoltRent. 🛵`;
+      window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
+    };
+
+    // ----------------------------------------
+    // Inicia
+    // ----------------------------------------
+    carregarClientes();
+
+  </script>
+
+</body>
+</html>
