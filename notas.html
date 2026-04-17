@@ -1,247 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VoltRent — Notas Promissórias</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Estilos da nota para impressão */
     @media print {
-      body * { visibility: hidden !important; }
-      #area-impressao, #area-impressao * { visibility: visible !important; }
-      #area-impressao {
-        position: fixed !important; inset: 0 !important;
-        width: 210mm; margin: auto; background: white;
-        padding: 20mm; font-family: serif !important;
-        font-size: 12pt !important; line-height: 1.6;
-      }
+      body>*{display:none!important;}
+      #area-print{display:block!important;position:fixed;inset:0;background:white;padding:20mm;font-family:'Times New Roman',serif;font-size:12pt;line-height:1.8;color:#000;}
     }
-
-    #area-impressao { display: none; }
-
-    .nota-impressao {
-      font-family: 'Times New Roman', serif;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #000;
-    }
-
-    .nota-titulo {
-      text-align: center; font-size: 18px;
-      font-weight: bold; text-transform: uppercase;
-      letter-spacing: 3px; margin-bottom: 20px;
-      border-bottom: 2px solid #000; padding-bottom: 10px;
-    }
-
-    .nota-valor-destaque {
-      text-align: center; font-size: 22px; font-weight: bold;
-      border: 2px solid #000; padding: 10px 20px;
-      margin: 16px auto; display: inline-block; width: 100%;
-    }
-
-    .nota-corpo { margin: 16px 0; text-align: justify; }
-
-    .nota-assinaturas {
-      margin-top: 48px;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-    }
-
-    .assinatura-linha {
-      border-top: 1px solid #000; padding-top: 8px;
-      text-align: center; font-size: 12px;
-    }
-
-    .nota-rodape {
-      margin-top: 24px; font-size: 11px;
-      text-align: center; color: #555;
-      border-top: 1px solid #ccc; padding-top: 8px;
-    }
+    #area-print{display:none;}
+    .nota-titulo{text-align:center;font-size:20px;font-weight:bold;text-transform:uppercase;letter-spacing:3px;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:16px;}
+    .nota-valor{text-align:center;font-size:22px;font-weight:bold;border:2px solid #000;padding:10px;margin:16px 0;display:block;}
+    .nota-corpo{text-align:justify;margin:16px 0;}
+    .nota-assinaturas{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:48px;}
+    .assin-linha{border-top:1px solid #000;padding-top:8px;text-align:center;font-size:12px;}
+    .nota-rodape{margin-top:24px;font-size:11px;text-align:center;color:#555;border-top:1px solid #ccc;padding-top:8px;}
   </style>
 </head>
 <body class="app">
-
-  <!-- TOPBAR MOBILE -->
-  <div class="topbar-mobile">
-    <span class="topbar-logo">🛵 VoltRent</span>
-    <button class="btn-menu" id="btn-menu">☰</button>
-  </div>
-
-  <div class="sidebar-overlay" id="overlay"></div>
-  <aside class="sidebar-gaveta" id="gaveta">
-    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
-    <div class="sidebar-secao">Principal</div>
+  <div class="topbar"><span class="topbar-logo">🛵 VoltRent</span><button class="topbar-btn" id="btn-menu">☰</button></div>
+  <div class="gaveta-overlay" id="gaveta-overlay"></div>
+  <aside class="gaveta" id="gaveta">
+    <div class="gaveta-logo">🛵 VoltRent</div>
+    <div class="nav-secao">Principal</div>
     <nav>
-      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
-      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
-      <a href="equipamentos.html"><span class="icone">🛵</span> Equipamentos</a>
-      <a href="contratos.html"><span class="icone">📋</span> Contratos</a>
+      <a href="dashboard.html" class="nav-link"><span class="ni">📊</span>Dashboard</a>
+      <a href="clientes.html" class="nav-link"><span class="ni">👥</span>Clientes</a>
+      <a href="equipamentos.html" class="nav-link"><span class="ni">🛵</span>Equipamentos</a>
+      <a href="contratos.html" class="nav-link"><span class="ni">📋</span>Contratos</a>
     </nav>
-    <div class="sidebar-secao">Financeiro</div>
+    <div class="nav-secao">Financeiro</div>
     <nav>
-      <a href="financeiro.html"><span class="icone">💰</span> Financeiro</a>
-      <a href="orcamentos.html"><span class="icone">📝</span> Orçamentos</a>
-      <a href="notas.html" class="ativo"><span class="icone">📄</span> Notas Promissórias</a>
+      <a href="financeiro.html" class="nav-link"><span class="ni">💰</span>Financeiro</a>
+      <a href="orcamentos.html" class="nav-link"><span class="ni">📝</span>Orçamentos</a>
+      <a href="notas.html" class="nav-link ativo"><span class="ni">📄</span>Notas Promissórias</a>
     </nav>
-    <div class="sidebar-rodape"><button id="btn-logout-mob">🚪 Sair</button></div>
+    <div class="nav-rodape"><button class="btn-logout" id="btn-logout-mob">🚪 Sair</button></div>
   </aside>
-
-  <!-- SIDEBAR DESKTOP -->
   <aside class="sidebar">
-    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
-    <div class="sidebar-secao">Principal</div>
+    <div class="sidebar-logo">🛵 VoltRent</div>
+    <div class="nav-secao">Principal</div>
     <nav>
-      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
-      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
-      <a href="equipamentos.html"><span class="icone">🛵</span> Equipamentos</a>
-      <a href="contratos.html"><span class="icone">📋</span> Contratos</a>
+      <a href="dashboard.html" class="nav-link"><span class="ni">📊</span>Dashboard</a>
+      <a href="clientes.html" class="nav-link"><span class="ni">👥</span>Clientes</a>
+      <a href="equipamentos.html" class="nav-link"><span class="ni">🛵</span>Equipamentos</a>
+      <a href="contratos.html" class="nav-link"><span class="ni">📋</span>Contratos</a>
     </nav>
-    <div class="sidebar-secao">Financeiro</div>
+    <div class="nav-secao">Financeiro</div>
     <nav>
-      <a href="financeiro.html"><span class="icone">💰</span> Financeiro</a>
-      <a href="orcamentos.html"><span class="icone">📝</span> Orçamentos</a>
-      <a href="notas.html" class="ativo"><span class="icone">📄</span> Notas Promissórias</a>
+      <a href="financeiro.html" class="nav-link"><span class="ni">💰</span>Financeiro</a>
+      <a href="orcamentos.html" class="nav-link"><span class="ni">📝</span>Orçamentos</a>
+      <a href="notas.html" class="nav-link ativo"><span class="ni">📄</span>Notas Promissórias</a>
     </nav>
-    <div class="sidebar-rodape"><button id="btn-logout">🚪 Sair</button></div>
+    <div class="nav-rodape"><button class="btn-logout" id="btn-logout">🚪 Sair</button></div>
   </aside>
 
   <main class="conteudo">
-
-    <div class="pagina-header">
-      <div>
-        <h1 class="pagina-titulo">Notas Promissórias</h1>
-        <p class="pagina-subtitulo" id="total-notas">Carregando...</p>
-      </div>
-      <button class="btn-primario" style="width:auto" id="btn-novo">➕ Nova Nota</button>
+    <div class="pg-header">
+      <div><h1 class="pg-titulo">Notas Promissórias</h1><p class="pg-subtitulo" id="total"></p></div>
+      <button class="btn-primario" id="btn-novo">➕ Nova Nota</button>
     </div>
-
-    <div class="filtros-row">
-      <button class="btn-filtro ativo" data-filtro="todos">Todas</button>
-      <button class="btn-filtro" data-filtro="pendente">⏳ Pendentes</button>
-      <button class="btn-filtro" data-filtro="pago">✅ Pagas</button>
-      <button class="btn-filtro" data-filtro="vencido">⚠️ Vencidas</button>
+    <div class="filtros">
+      <button class="btn-filtro ativo" data-f="todos">Todas</button>
+      <button class="btn-filtro" data-f="pendente">⏳ Pendentes</button>
+      <button class="btn-filtro" data-f="pago">✅ Pagas</button>
+      <button class="btn-filtro" data-f="vencido">⚠️ Vencidas</button>
     </div>
-
-    <div class="tabela-wrapper">
-      <div class="tabela-header">
+    <div class="tabela-wrap">
+      <div class="tabela-topo">
         <h3>Lista de Notas Promissórias</h3>
-        <input type="text" class="busca-input" id="busca" placeholder="🔍 Buscar por nome ou CPF...">
+        <input type="text" class="busca" id="busca" placeholder="🔍 Nome ou CPF...">
       </div>
-
-      <!-- Tabela desktop -->
-      <div class="tabela-scroll">
+      <div class="tbl-scroll">
         <table>
-          <thead>
-            <tr>
-              <th>Nome / CPF</th>
-              <th>Valor</th>
-              <th>Vencimento</th>
-              <th>Cidade</th>
-              <th>Referência</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabela-notas"></tbody>
+          <thead><tr><th>Nome / CPF</th><th>Valor</th><th>Vencimento</th><th>Cidade</th><th>Referência</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody"></tbody>
         </table>
       </div>
-
-      <!-- Cards mobile -->
-      <div class="cards-mobile" id="cards-notas"></div>
+      <div class="cards-mob" id="cards"></div>
     </div>
-
   </main>
 
-  <!-- Área de impressão (invisível na tela) -->
-  <div id="area-impressao"></div>
+  <div id="area-print"></div>
 
-  <!-- MODAL CADASTRO -->
-  <div class="modal-overlay" id="modal-nota">
+  <div class="modal-overlay" id="modal">
     <div class="modal">
-      <div class="modal-header">
-        <h3 id="modal-titulo">Nova Nota Promissória</h3>
-        <button class="modal-fechar" id="btn-fechar">✕</button>
-      </div>
-      <div class="modal-corpo">
-        <form id="form-nota">
-          <div class="campos-grid">
-
-            <div class="campo campo-largo">
-              <label>Nome completo do devedor *</label>
-              <input type="text" id="campo-nome" placeholder="Nome como aparecerá na nota" required>
-            </div>
-
-            <div class="campo">
-              <label>CPF do devedor *</label>
-              <input type="text" id="campo-cpf" placeholder="000.000.000-00" required>
-            </div>
-
-            <div class="campo">
-              <label>RG (opcional)</label>
-              <input type="text" id="campo-rg" placeholder="00.000.000-0">
-            </div>
-
-            <div class="campo">
-              <label>Valor (R$) *</label>
-              <input type="number" id="campo-valor" step="0.01" min="0.01" placeholder="0,00" required>
-            </div>
-
-            <div class="campo">
-              <label>Data de vencimento *</label>
-              <input type="date" id="campo-vencimento" required>
-            </div>
-
-            <div class="campo">
-              <label>Cidade de emissão *</label>
-              <input type="text" id="campo-cidade" placeholder="Ex: Ponto Belo" required>
-            </div>
-
-            <div class="campo">
-              <label>Estado *</label>
-              <select id="campo-estado" required>
-                <option value="">Selecione...</option>
-                <option value="AC">AC</option><option value="AL">AL</option>
-                <option value="AM">AM</option><option value="BA">BA</option>
-                <option value="CE">CE</option><option value="DF">DF</option>
-                <option value="ES" selected>ES</option><option value="GO">GO</option>
-                <option value="MA">MA</option><option value="MG">MG</option>
-                <option value="MS">MS</option><option value="MT">MT</option>
-                <option value="PA">PA</option><option value="PB">PB</option>
-                <option value="PE">PE</option><option value="PI">PI</option>
-                <option value="PR">PR</option><option value="RJ">RJ</option>
-                <option value="RN">RN</option><option value="RO">RO</option>
-                <option value="RR">RR</option><option value="RS">RS</option>
-                <option value="SC">SC</option><option value="SE">SE</option>
-                <option value="SP">SP</option><option value="TO">TO</option>
-              </select>
-            </div>
-
-            <div class="campo">
-              <label>Status</label>
-              <select id="campo-status">
-                <option value="pendente">⏳ Pendente</option>
-                <option value="pago">✅ Pago</option>
-                <option value="vencido">⚠️ Vencido</option>
-              </select>
-            </div>
-
-            <div class="campo campo-largo">
-              <label>Referência (motivo da nota)</label>
-              <input type="text" id="campo-ref" placeholder="Ex: Locação de scooter elétrica — Contrato nº 001">
-            </div>
-
-            <div class="campo campo-largo">
-              <label>Nome do credor (sua empresa)</label>
-              <input type="text" id="campo-credor" placeholder="Ex: VoltRent Locações" value="VoltRent Locações">
-            </div>
-
+      <div class="modal-head"><h3 id="mt">Nova Nota Promissória</h3><button class="modal-x" id="btn-x">✕</button></div>
+      <div class="modal-body">
+        <div class="grade">
+          <div class="campo largo"><label>Nome do devedor *</label><input type="text" id="f-nome" required></div>
+          <div class="campo"><label>CPF *</label><input type="text" id="f-cpf" placeholder="000.000.000-00" required></div>
+          <div class="campo"><label>RG</label><input type="text" id="f-rg"></div>
+          <div class="campo"><label>Valor (R$) *</label><input type="number" id="f-valor" step="0.01" min="0.01" required></div>
+          <div class="campo"><label>Vencimento *</label><input type="date" id="f-venc" required></div>
+          <div class="campo"><label>Cidade *</label><input type="text" id="f-cidade" required></div>
+          <div class="campo"><label>Estado *</label>
+            <select id="f-uf" required>
+              <option value="">UF</option>
+              <option>AC</option><option>AL</option><option>AM</option><option>BA</option><option>CE</option>
+              <option>DF</option><option selected>ES</option><option>GO</option><option>MA</option><option>MG</option>
+              <option>MS</option><option>MT</option><option>PA</option><option>PB</option><option>PE</option>
+              <option>PI</option><option>PR</option><option>RJ</option><option>RN</option><option>RO</option>
+              <option>RR</option><option>RS</option><option>SC</option><option>SE</option><option>SP</option><option>TO</option>
+            </select>
           </div>
-          <input type="hidden" id="campo-id">
-        </form>
+          <div class="campo"><label>Status</label>
+            <select id="f-status">
+              <option value="pendente">⏳ Pendente</option>
+              <option value="pago">✅ Pago</option>
+              <option value="vencido">⚠️ Vencido</option>
+            </select>
+          </div>
+          <div class="campo largo"><label>Referência</label><input type="text" id="f-ref" placeholder="Ex: Locação scooter SC-001"></div>
+          <div class="campo largo"><label>Nome do credor (sua empresa)</label><input type="text" id="f-credor" value="VoltRent Locações"></div>
+        </div>
+        <input type="hidden" id="f-id">
       </div>
-      <div class="modal-rodape">
-        <button class="btn-secundario" id="btn-cancelar">Cancelar</button>
-        <button class="btn-primario" id="btn-salvar" style="width:auto">💾 Salvar</button>
+      <div class="modal-foot">
+        <button class="btn-secundario" id="btn-cancel">Cancelar</button>
+        <button class="btn-primario" id="btn-salvar">💾 Salvar</button>
       </div>
     </div>
   </div>
@@ -249,341 +127,173 @@
   <script type="module">
     import { protegerPagina, logout } from "./js/auth.js";
     import { db } from "./js/firebase-config.js";
-    import { showToast, formatarMoeda, formatarData } from "./js/utils.js";
-    import {
-      collection, getDocs, addDoc, updateDoc, deleteDoc,
-      doc, orderBy, query, serverTimestamp, Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { showToast, formatarMoeda } from "./js/utils.js";
+    import { iniciarMenuMobile } from "./js/menu.js";
+    import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query, serverTimestamp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    protegerPagina();
+    protegerPagina(); iniciarMenuMobile();
     document.getElementById("btn-logout").addEventListener("click", logout);
     document.getElementById("btn-logout-mob").addEventListener("click", logout);
 
-    // Menu mobile
-    const gaveta  = document.getElementById("gaveta");
-    const overlay = document.getElementById("overlay");
-    document.getElementById("btn-menu").addEventListener("click", () => {
-      gaveta.classList.add("aberta"); overlay.classList.add("aberto");
-    });
-    overlay.addEventListener("click", () => {
-      gaveta.classList.remove("aberta"); overlay.classList.remove("aberto");
-    });
+    let todos=[], filtro="todos";
+    const col=collection(db,"notas");
 
-    let todos = [], filtroAtual = "todos";
+    function badge(s){
+      const m={pendente:"badge-pendente",pago:"badge-pago",vencido:"badge-vencido"};
+      const l={pendente:"Pendente",pago:"Pago",vencido:"Vencido"};
+      return `<span class="badge ${m[s]||''}">${l[s]||s}</span>`;
+    }
 
-    // Verifica vencimentos ao carregar
-    async function iniciar() {
-      const snap = await getDocs(query(collection(db, "notas"), orderBy("vencimento", "desc")));
-      todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    function fmtVenc(v){return v?new Date(v+"T12:00").toLocaleDateString("pt-BR"):"—";}
 
-      // Marca como vencido automaticamente se passou da data
-      const hoje = new Date(); hoje.setHours(0,0,0,0);
-      const atualizacoes = [];
-      todos.forEach(n => {
-        if (n.status === "pendente" && n.vencimento) {
-          const venc = new Date(n.vencimento + "T00:00:00");
-          if (venc < hoje) {
-            atualizacoes.push(updateDoc(doc(db, "notas", n.id), { status: "vencido" }));
-            n.status = "vencido";
-          }
-        }
-      });
-      if (atualizacoes.length) await Promise.all(atualizacoes);
-
+    async function carregar(){
+      const snap=await getDocs(query(col,orderBy("vencimento","desc")));
+      todos=snap.docs.map(d=>({id:d.id,...d.data()}));
+      // Marca vencidos automaticamente
+      const hoje=new Date();hoje.setHours(0,0,0,0);
+      const ups=[];
+      todos.forEach(n=>{if(n.status==="pendente"&&n.vencimento){const v=new Date(n.vencimento+"T00:00:00");if(v<hoje){ups.push(updateDoc(doc(db,"notas",n.id),{status:"vencido"}));n.status="vencido";}}});
+      if(ups.length)await Promise.all(ups);
       renderizar();
-      document.getElementById("total-notas").textContent =
-        `${todos.length} nota(s) · ${todos.filter(n=>n.status==="pendente").length} pendente(s)`;
+      document.getElementById("total").textContent=`${todos.length} nota(s) · ${todos.filter(n=>n.status==="pendente").length} pendente(s)`;
     }
 
-    function badgeNota(status) {
-      const map = { pendente:'badge-pendente', pago:'badge-pago', vencido:'badge-vencido' };
-      const lbl = { pendente:'Pendente', pago:'Pago', vencido:'Vencido' };
-      return `<span class="badge ${map[status]||''}">${lbl[status]||status}</span>`;
+    function renderizar(){
+      const q=document.getElementById("busca").value.toLowerCase();
+      let lista=filtro==="todos"?todos:todos.filter(n=>n.status===filtro);
+      if(q)lista=lista.filter(n=>(n.nome||"").toLowerCase().includes(q)||(n.cpf||"").toLowerCase().includes(q));
+
+      document.getElementById("tbody").innerHTML=lista.length?lista.map(n=>`<tr>
+        <td><strong>${n.nome||"—"}</strong><br><span class="ts tc">${n.cpf||""}</span></td>
+        <td><strong style="color:var(--verde)">${formatarMoeda(n.valor)}</strong></td>
+        <td>${fmtVenc(n.vencimento)}</td>
+        <td>${n.cidade||"—"}/${n.estado||""}</td>
+        <td class="ts">${n.referencia||"—"}</td>
+        <td>${badge(n.status)}</td>
+        <td><div class="acoes">
+          <button class="btn-icon" onclick="imprimir('${n.id}')">🖨️</button>
+          <button class="btn-icon" onclick="editar('${n.id}')">✏️</button>
+          ${n.status==="pendente"?`<button class="btn-icon" onclick="marcarPago('${n.id}')">✅</button>`:""}
+          <button class="btn-icon btn-perigo" onclick="excluir('${n.id}')">🗑️</button>
+        </div></td></tr>`).join(""):`<tr><td colspan="7"><div class="vazio"><div class="vi">📄</div><p>Nenhuma nota.</p></div></td></tr>`;
+
+      document.getElementById("cards").innerHTML=lista.length?lista.map(n=>`
+        <div class="card-mob">
+          <div class="card-mob-head">
+            <div><div class="card-mob-nome">${n.nome||"—"}</div><div class="card-mob-sub">CPF: ${n.cpf||"—"}</div></div>
+            ${badge(n.status)}
+          </div>
+          <div class="card-mob-linha"><span class="card-mob-label">Valor</span><strong style="color:var(--verde)">${formatarMoeda(n.valor)}</strong></div>
+          <div class="card-mob-linha"><span class="card-mob-label">Vencimento</span><span>${fmtVenc(n.vencimento)}</span></div>
+          <div class="card-mob-linha"><span class="card-mob-label">Cidade</span><span>${n.cidade||"—"}/${n.estado||""}</span></div>
+          ${n.referencia?`<div class="card-mob-linha"><span class="card-mob-label">Ref.</span><span>${n.referencia}</span></div>`:""}
+          <div class="card-mob-btns">
+            <button class="card-mob-btn verde" onclick="imprimir('${n.id}')">🖨️ Imprimir</button>
+            <button class="card-mob-btn" onclick="editar('${n.id}')">✏️ Editar</button>
+            ${n.status==="pendente"?`<button class="card-mob-btn verde" onclick="marcarPago('${n.id}')">✅ Pago</button>`:""}
+            <button class="card-mob-btn vermelho" onclick="excluir('${n.id}')">🗑️</button>
+          </div>
+        </div>`).join(""):`<div class="vazio"><div class="vi">📄</div><p>Nenhuma nota.</p></div>`;
     }
 
-    function getLista() {
-      const busca = document.getElementById("busca").value.toLowerCase();
-      let lista = todos;
-      if (filtroAtual !== "todos") lista = lista.filter(n => n.status === filtroAtual);
-      if (busca) lista = lista.filter(n =>
-        (n.nome||"").toLowerCase().includes(busca) ||
-        (n.cpf ||"").toLowerCase().includes(busca)
-      );
-      return lista;
-    }
+    document.querySelectorAll(".btn-filtro").forEach(b=>b.addEventListener("click",()=>{
+      document.querySelectorAll(".btn-filtro").forEach(x=>x.classList.remove("ativo"));b.classList.add("ativo");filtro=b.dataset.f;renderizar();
+    }));
+    document.getElementById("busca").addEventListener("input",renderizar);
 
-    function renderizar() {
-      const lista = getLista();
+    function abrirModal(t){document.getElementById("mt").textContent=t;document.getElementById("modal").classList.add("aberto");}
+    function fecharModal(){document.getElementById("modal").classList.remove("aberto");["f-nome","f-cpf","f-rg","f-valor","f-venc","f-cidade","f-ref"].forEach(i=>{const el=document.getElementById(i);if(el)el.value="";});document.getElementById("f-uf").value="";document.getElementById("f-status").value="pendente";document.getElementById("f-credor").value="VoltRent Locações";document.getElementById("f-id").value="";}
 
-      // Tabela desktop
-      const tbody = document.getElementById("tabela-notas");
-      if (lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7"><div class="estado-vazio"><div class="icone-vazio">📄</div><p>Nenhuma nota encontrada.</p></div></td></tr>`;
-      } else {
-        tbody.innerHTML = lista.map(n => `
-          <tr>
-            <td>
-              <strong>${n.nome||"—"}</strong>
-              <br><span class="texto-pequeno texto-cinza">${n.cpf||""}</span>
-            </td>
-            <td><strong style="color:var(--verde)">${formatarMoeda(n.valor)}</strong></td>
-            <td style="font-size:13px;">${n.vencimento ? new Date(n.vencimento+"T12:00").toLocaleDateString("pt-BR") : "—"}</td>
-            <td>${n.cidade||"—"}/${n.estado||""}</td>
-            <td style="font-size:13px;">${n.referencia||"—"}</td>
-            <td>${badgeNota(n.status)}</td>
-            <td>
-              <div class="td-acoes">
-                <button class="btn-icon" title="Imprimir nota" onclick="imprimir('${n.id}')">🖨️</button>
-                <button class="btn-icon" title="Editar" onclick="editar('${n.id}')">✏️</button>
-                ${n.status === 'pendente'
-                  ? `<button class="btn-icon" title="Marcar como pago" onclick="marcarPago('${n.id}')">✅</button>`
-                  : ''}
-                <button class="btn-icon btn-perigo" title="Excluir" onclick="excluir('${n.id}')">🗑️</button>
-              </div>
-            </td>
-          </tr>`).join("");
-      }
+    document.getElementById("btn-novo").addEventListener("click",()=>abrirModal("Nova Nota Promissória"));
+    document.getElementById("btn-x").addEventListener("click",fecharModal);
+    document.getElementById("btn-cancel").addEventListener("click",fecharModal);
+    document.getElementById("modal").addEventListener("click",e=>{if(e.target===e.currentTarget)fecharModal();});
 
-      // Cards mobile
-      const cards = document.getElementById("cards-notas");
-      if (lista.length === 0) {
-        cards.innerHTML = `<div class="estado-vazio"><div class="icone-vazio">📄</div><p>Nenhuma nota encontrada.</p></div>`;
-      } else {
-        cards.innerHTML = lista.map(n => `
-          <div class="card-item">
-            <div class="card-item-header">
-              <div>
-                <div class="card-item-titulo">${n.nome||"—"}</div>
-                <div class="card-item-detalhe">CPF: ${n.cpf||"—"}</div>
-              </div>
-              ${badgeNota(n.status)}
-            </div>
-            <div class="card-item-linha">
-              <span class="card-item-label">Valor</span>
-              <strong style="color:var(--verde)">${formatarMoeda(n.valor)}</strong>
-            </div>
-            <div class="card-item-linha">
-              <span class="card-item-label">Vencimento</span>
-              <span>${n.vencimento ? new Date(n.vencimento+"T12:00").toLocaleDateString("pt-BR") : "—"}</span>
-            </div>
-            <div class="card-item-linha">
-              <span class="card-item-label">Cidade</span>
-              <span>${n.cidade||"—"}/${n.estado||""}</span>
-            </div>
-            <div class="card-item-acoes">
-              <button class="btn-acao verde" onclick="imprimir('${n.id}')">🖨️ Imprimir</button>
-              <button class="btn-acao" onclick="editar('${n.id}')">✏️ Editar</button>
-              ${n.status === 'pendente'
-                ? `<button class="btn-acao verde" onclick="marcarPago('${n.id}')">✅ Pago</button>`
-                : ''}
-              <button class="btn-acao vermelho" onclick="excluir('${n.id}')">🗑️</button>
-            </div>
-          </div>`).join("");
-      }
-    }
-
-    document.querySelectorAll(".btn-filtro").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".btn-filtro").forEach(b => b.classList.remove("ativo"));
-        btn.classList.add("ativo");
-        filtroAtual = btn.dataset.filtro;
-        renderizar();
-      });
-    });
-    document.getElementById("busca").addEventListener("input", renderizar);
-
-    // Modal
-    function abrirModal(titulo = "Nova Nota Promissória") {
-      document.getElementById("modal-titulo").textContent = titulo;
-      document.getElementById("modal-nota").classList.add("aberto");
-    }
-    function fecharModal() {
-      document.getElementById("modal-nota").classList.remove("aberto");
-      document.getElementById("form-nota").reset();
-      document.getElementById("campo-id").value = "";
-      document.getElementById("campo-credor").value = "VoltRent Locações";
-    }
-
-    document.getElementById("btn-novo").addEventListener("click", () => abrirModal());
-    document.getElementById("btn-fechar").addEventListener("click", fecharModal);
-    document.getElementById("btn-cancelar").addEventListener("click", fecharModal);
-    document.getElementById("modal-nota").addEventListener("click", e => { if (e.target === e.currentTarget) fecharModal(); });
-
-    // Salvar
-    document.getElementById("btn-salvar").addEventListener("click", async () => {
-      const id     = document.getElementById("campo-id").value;
-      const nome   = document.getElementById("campo-nome").value.trim();
-      const cpf    = document.getElementById("campo-cpf").value.trim();
-      const valor  = parseFloat(document.getElementById("campo-valor").value) || 0;
-      const venc   = document.getElementById("campo-vencimento").value;
-      const cidade = document.getElementById("campo-cidade").value.trim();
-      const estado = document.getElementById("campo-estado").value;
-
-      if (!nome || !cpf || !valor || !venc || !cidade || !estado) {
-        showToast("Preencha todos os campos obrigatórios.", "aviso"); return;
-      }
-
-      const dados = {
-        nome, cpf, valor, vencimento: venc, cidade, estado,
-        rg:         document.getElementById("campo-rg").value.trim(),
-        status:     document.getElementById("campo-status").value,
-        referencia: document.getElementById("campo-ref").value.trim(),
-        credor:     document.getElementById("campo-credor").value.trim(),
-      };
-
-      const btn = document.getElementById("btn-salvar");
-      btn.textContent = "Salvando..."; btn.disabled = true;
-
-      try {
-        if (id) {
-          await updateDoc(doc(db, "notas", id), dados);
-          showToast("Nota atualizada!", "sucesso");
-        } else {
-          dados.dataCriacao = serverTimestamp();
-          await addDoc(collection(db, "notas"), dados);
-          showToast("Nota criada!", "sucesso");
-        }
-        fecharModal(); await iniciar();
-      } catch (err) {
-        showToast("Erro ao salvar.", "erro");
-      } finally {
-        btn.textContent = "💾 Salvar"; btn.disabled = false;
-      }
+    document.getElementById("btn-salvar").addEventListener("click",async()=>{
+      const id=document.getElementById("f-id").value;
+      const nome=document.getElementById("f-nome").value.trim();
+      const cpf=document.getElementById("f-cpf").value.trim();
+      const valor=parseFloat(document.getElementById("f-valor").value)||0;
+      const venc=document.getElementById("f-venc").value;
+      const cidade=document.getElementById("f-cidade").value.trim();
+      const uf=document.getElementById("f-uf").value;
+      if(!nome||!cpf||!valor||!venc||!cidade||!uf){showToast("Preencha todos os campos.","aviso");return;}
+      const d={nome,cpf,valor,vencimento:venc,cidade,estado:uf,rg:document.getElementById("f-rg").value.trim(),status:document.getElementById("f-status").value,referencia:document.getElementById("f-ref").value.trim(),credor:document.getElementById("f-credor").value.trim()};
+      const btn=document.getElementById("btn-salvar");btn.textContent="Salvando...";btn.disabled=true;
+      try{
+        if(id){await updateDoc(doc(db,"notas",id),d);showToast("Nota atualizada!");}
+        else{d.dataCriacao=serverTimestamp();await addDoc(col,d);showToast("Nota criada!");}
+        fecharModal();await carregar();
+      }catch(e){showToast("Erro.","erro");}
+      finally{btn.textContent="💾 Salvar";btn.disabled=false;}
     });
 
-    window.editar = function(id) {
-      const n = todos.find(x => x.id === id); if (!n) return;
-      document.getElementById("campo-id").value         = n.id;
-      document.getElementById("campo-nome").value       = n.nome       || "";
-      document.getElementById("campo-cpf").value        = n.cpf        || "";
-      document.getElementById("campo-rg").value         = n.rg         || "";
-      document.getElementById("campo-valor").value      = n.valor      || "";
-      document.getElementById("campo-vencimento").value = n.vencimento || "";
-      document.getElementById("campo-cidade").value     = n.cidade     || "";
-      document.getElementById("campo-estado").value     = n.estado     || "";
-      document.getElementById("campo-status").value     = n.status     || "pendente";
-      document.getElementById("campo-ref").value        = n.referencia || "";
-      document.getElementById("campo-credor").value     = n.credor     || "VoltRent Locações";
+    window.editar=id=>{
+      const n=todos.find(x=>x.id===id);if(!n)return;
+      document.getElementById("f-id").value=n.id;
+      document.getElementById("f-nome").value=n.nome||"";
+      document.getElementById("f-cpf").value=n.cpf||"";
+      document.getElementById("f-rg").value=n.rg||"";
+      document.getElementById("f-valor").value=n.valor||"";
+      document.getElementById("f-venc").value=n.vencimento||"";
+      document.getElementById("f-cidade").value=n.cidade||"";
+      document.getElementById("f-uf").value=n.estado||"";
+      document.getElementById("f-status").value=n.status||"pendente";
+      document.getElementById("f-ref").value=n.referencia||"";
+      document.getElementById("f-credor").value=n.credor||"VoltRent Locações";
       abrirModal("Editar Nota Promissória");
     };
 
-    window.marcarPago = async function(id) {
-      if (!confirm("Marcar esta nota como paga?")) return;
-      try {
-        await updateDoc(doc(db, "notas", id), { status: "pago" });
-        showToast("Nota marcada como paga!", "sucesso"); await iniciar();
-      } catch (err) { showToast("Erro ao atualizar.", "erro"); }
+    window.marcarPago=async id=>{
+      if(!confirm("Marcar como paga?"))return;
+      try{await updateDoc(doc(db,"notas",id),{status:"pago"});showToast("Marcada como paga!");await carregar();}
+      catch(e){showToast("Erro.","erro");}
     };
 
-    window.excluir = async function(id) {
-      const n = todos.find(x => x.id === id);
-      if (!confirm(`Excluir a nota de "${n?.nome}"?`)) return;
-      try {
-        await deleteDoc(doc(db, "notas", id));
-        showToast("Nota excluída.", "sucesso"); await iniciar();
-      } catch (err) { showToast("Erro ao excluir.", "erro"); }
+    window.excluir=async id=>{
+      const n=todos.find(x=>x.id===id);
+      if(!confirm(`Excluir nota de "${n?.nome}"?`))return;
+      try{await deleteDoc(doc(db,"notas",id));showToast("Excluída.");await carregar();}
+      catch(e){showToast("Erro.","erro");}
     };
 
-    // ----------------------------------------
-    // IMPRIMIR NOTA PROMISSÓRIA
-    // ----------------------------------------
-    window.imprimir = function(id) {
-      const n = todos.find(x => x.id === id); if (!n) return;
-
-      // Formata valor por extenso (simplificado)
-      function valorExtenso(valor) {
-        if (!valor) return "zero reais";
-        const inteiro = Math.floor(valor);
-        const centavos = Math.round((valor - inteiro) * 100);
-        const unidades = ["","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze","treze","quatorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
-        const dezenas  = ["","","vinte","trinta","quarenta","cinquenta","sessenta","setenta","oitenta","noventa"];
-        const centenas = ["","cem","duzentos","trezentos","quatrocentos","quinhentos","seiscentos","setecentos","oitocentos","novecentos"];
-        function porExtenso(n) {
-          if (n === 0) return "";
-          if (n < 20) return unidades[n];
-          if (n < 100) return dezenas[Math.floor(n/10)] + (n%10 ? " e " + unidades[n%10] : "");
-          if (n < 1000) return (n===100?"cem":centenas[Math.floor(n/100)]) + (n%100 ? " e " + porExtenso(n%100) : "");
-          if (n < 1000000) {
-            const mil = Math.floor(n/1000);
-            return (mil===1?"mil":(porExtenso(mil)+" mil")) + (n%1000 ? " e " + porExtenso(n%1000) : "");
-          }
-          return n.toString();
-        }
-        const txt = (inteiro > 0 ? porExtenso(inteiro) + (inteiro === 1 ? " real" : " reais") : "");
-        const ctxt = (centavos > 0 ? porExtenso(centavos) + (centavos === 1 ? " centavo" : " centavos") : "");
-        return [txt, ctxt].filter(Boolean).join(" e ") || "zero reais";
+    window.imprimir=id=>{
+      const n=todos.find(x=>x.id===id);if(!n)return;
+      function ext(v){
+        if(!v)return"zero reais";
+        const un=["","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze","treze","quatorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
+        const dz=["","","vinte","trinta","quarenta","cinquenta","sessenta","setenta","oitenta","noventa"];
+        const ct=["","cem","duzentos","trezentos","quatrocentos","quinhentos","seiscentos","setecentos","oitocentos","novecentos"];
+        function pe(n){if(n===0)return"";if(n<20)return un[n];if(n<100)return dz[Math.floor(n/10)]+(n%10?" e "+un[n%10]:"");if(n<1000)return(n===100?"cem":ct[Math.floor(n/100)])+(n%100?" e "+pe(n%100):"");if(n<1000000){const m=Math.floor(n/1000);return(m===1?"mil":pe(m)+" mil")+(n%1000?" e "+pe(n%1000):"");}return n.toString();}
+        const i=Math.floor(v),c=Math.round((v-i)*100);
+        const ti=i>0?pe(i)+(i===1?" real":" reais"):"";
+        const tc=c>0?pe(c)+(c===1?" centavo":" centavos"):"";
+        return[ti,tc].filter(Boolean).join(" e ")||"zero reais";
       }
-
-      const dataVenc = n.vencimento
-        ? new Date(n.vencimento + "T12:00").toLocaleDateString("pt-BR", { day:"numeric", month:"long", year:"numeric" })
-        : "—";
-
-      const dataEmissao = new Date().toLocaleDateString("pt-BR", { day:"numeric", month:"long", year:"numeric" });
-
-      document.getElementById("area-impressao").innerHTML = `
-        <div class="nota-impressao">
-          <div class="nota-titulo">Nota Promissória</div>
-
-          <div class="nota-valor-destaque">
-            R$ ${formatarMoeda(n.valor).replace("R$","").trim()}
-          </div>
-
-          <div class="nota-corpo">
-            <p>
-              Aos <strong>${dataVenc}</strong>, pagarei por esta única via de
-              <strong>NOTA PROMISSÓRIA</strong> a <strong>${n.credor || "VoltRent Locações"}</strong>,
-              ou à sua ordem, a quantia de
-              <strong>${formatarMoeda(n.valor)}</strong>
-              (<em>${valorExtenso(n.valor)}</em>),
-              pagável em <strong>${n.cidade}/${n.estado}</strong>.
-            </p>
-
-            <br>
-
-            <p>
-              <strong>Referência:</strong> ${n.referencia || "Locação de equipamento elétrico"}
-            </p>
-
-            <br>
-
-            <p>
-              <strong>Emitente / Devedor:</strong> ${n.nome}<br>
-              <strong>CPF:</strong> ${n.cpf}
-              ${n.rg ? `&nbsp;&nbsp;<strong>RG:</strong> ${n.rg}` : ""}
-            </p>
-          </div>
-
-          <p style="font-size:12px; color:#555;">
-            ${n.cidade}/${n.estado}, ${dataEmissao}
-          </p>
-
-          <div class="nota-assinaturas">
-            <div class="assinatura-linha">
-              ${n.nome}<br>
-              CPF: ${n.cpf}<br>
-              <em>Devedor / Emitente</em>
-            </div>
-            <div class="assinatura-linha">
-              ${n.credor || "VoltRent Locações"}<br>
-              <br>
-              <em>Credor / Beneficiário</em>
-            </div>
-          </div>
-
-          <div class="nota-rodape">
-            Nota promissória gerada pelo sistema VoltRent · ${dataEmissao}
-          </div>
-        </div>`;
-
-      document.getElementById("area-impressao").style.display = "block";
-      setTimeout(() => {
-        window.print();
-        document.getElementById("area-impressao").style.display = "none";
-      }, 200);
+      const dv=n.vencimento?new Date(n.vencimento+"T12:00").toLocaleDateString("pt-BR",{day:"numeric",month:"long",year:"numeric"}):"—";
+      const de=new Date().toLocaleDateString("pt-BR",{day:"numeric",month:"long",year:"numeric"});
+      document.getElementById("area-print").innerHTML=`
+        <div class="nota-titulo">Nota Promissória</div>
+        <span class="nota-valor">R$ ${n.valor.toLocaleString("pt-BR",{minimumFractionDigits:2})}</span>
+        <div class="nota-corpo">
+          <p>Aos <strong>${dv}</strong>, pagarei por esta única via de <strong>NOTA PROMISSÓRIA</strong> a <strong>${n.credor||"VoltRent Locações"}</strong>, ou à sua ordem, a quantia de <strong>${formatarMoeda(n.valor)}</strong> (<em>${ext(n.valor)}</em>), pagável em <strong>${n.cidade}/${n.estado}</strong>.</p>
+          <br>
+          <p><strong>Referência:</strong> ${n.referencia||"Locação de equipamento elétrico"}</p>
+          <br>
+          <p><strong>Emitente:</strong> ${n.nome}<br><strong>CPF:</strong> ${n.cpf}${n.rg?` &nbsp; <strong>RG:</strong> ${n.rg}`:""}</p>
+        </div>
+        <p style="font-size:12px;color:#555;">${n.cidade}/${n.estado}, ${de}</p>
+        <div class="nota-assinaturas">
+          <div class="assin-linha">${n.nome}<br>CPF: ${n.cpf}<br><em>Devedor / Emitente</em></div>
+          <div class="assin-linha">${n.credor||"VoltRent Locações"}<br><br><em>Credor / Beneficiário</em></div>
+        </div>
+        <div class="nota-rodape">Nota gerada pelo sistema VoltRent · ${de}</div>`;
+      document.getElementById("area-print").style.display="block";
+      setTimeout(()=>{window.print();document.getElementById("area-print").style.display="none";},150);
     };
 
-    iniciar();
+    carregar();
   </script>
-
 </body>
 </html>
