@@ -1,187 +1,110 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VoltRent — Orçamentos</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    .preview{display:none;margin-top:10px;padding:12px;background:var(--verde-claro);border:1px solid var(--verde-borda);border-radius:var(--radius);font-size:13px;color:var(--verde-hover);}
+  </style>
 </head>
 <body class="app">
-
-  <!-- TOPBAR MOBILE -->
-  <div class="topbar-mobile">
-    <span class="topbar-logo">🛵 VoltRent</span>
-    <button class="btn-menu" id="btn-menu">☰</button>
-  </div>
-
-  <!-- OVERLAY + GAVETA MOBILE -->
-  <div class="sidebar-overlay" id="overlay"></div>
-  <aside class="sidebar-gaveta" id="gaveta">
-    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
-    <div class="sidebar-secao">Principal</div>
+  <div class="topbar"><span class="topbar-logo">🛵 VoltRent</span><button class="topbar-btn" id="btn-menu">☰</button></div>
+  <div class="gaveta-overlay" id="gaveta-overlay"></div>
+  <aside class="gaveta" id="gaveta">
+    <div class="gaveta-logo">🛵 VoltRent</div>
+    <div class="nav-secao">Principal</div>
     <nav>
-      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
-      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
-      <a href="equipamentos.html"><span class="icone">🛵</span> Equipamentos</a>
-      <a href="contratos.html"><span class="icone">📋</span> Contratos</a>
+      <a href="dashboard.html" class="nav-link"><span class="ni">📊</span>Dashboard</a>
+      <a href="clientes.html" class="nav-link"><span class="ni">👥</span>Clientes</a>
+      <a href="equipamentos.html" class="nav-link"><span class="ni">🛵</span>Equipamentos</a>
+      <a href="contratos.html" class="nav-link"><span class="ni">📋</span>Contratos</a>
     </nav>
-    <div class="sidebar-secao">Financeiro</div>
+    <div class="nav-secao">Financeiro</div>
     <nav>
-      <a href="financeiro.html"><span class="icone">💰</span> Financeiro</a>
-      <a href="orcamentos.html" class="ativo"><span class="icone">📝</span> Orçamentos</a>
-      <a href="notas.html"><span class="icone">📄</span> Notas Promissórias</a>
+      <a href="financeiro.html" class="nav-link"><span class="ni">💰</span>Financeiro</a>
+      <a href="orcamentos.html" class="nav-link ativo"><span class="ni">📝</span>Orçamentos</a>
+      <a href="notas.html" class="nav-link"><span class="ni">📄</span>Notas Promissórias</a>
     </nav>
-    <div class="sidebar-rodape"><button id="btn-logout-mob">🚪 Sair</button></div>
+    <div class="nav-rodape"><button class="btn-logout" id="btn-logout-mob">🚪 Sair</button></div>
   </aside>
-
-  <!-- SIDEBAR DESKTOP -->
   <aside class="sidebar">
-    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
-    <div class="sidebar-secao">Principal</div>
+    <div class="sidebar-logo">🛵 VoltRent</div>
+    <div class="nav-secao">Principal</div>
     <nav>
-      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
-      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
-      <a href="equipamentos.html"><span class="icone">🛵</span> Equipamentos</a>
-      <a href="contratos.html"><span class="icone">📋</span> Contratos</a>
+      <a href="dashboard.html" class="nav-link"><span class="ni">📊</span>Dashboard</a>
+      <a href="clientes.html" class="nav-link"><span class="ni">👥</span>Clientes</a>
+      <a href="equipamentos.html" class="nav-link"><span class="ni">🛵</span>Equipamentos</a>
+      <a href="contratos.html" class="nav-link"><span class="ni">📋</span>Contratos</a>
     </nav>
-    <div class="sidebar-secao">Financeiro</div>
+    <div class="nav-secao">Financeiro</div>
     <nav>
-      <a href="financeiro.html"><span class="icone">💰</span> Financeiro</a>
-      <a href="orcamentos.html" class="ativo"><span class="icone">📝</span> Orçamentos</a>
-      <a href="notas.html"><span class="icone">📄</span> Notas Promissórias</a>
+      <a href="financeiro.html" class="nav-link"><span class="ni">💰</span>Financeiro</a>
+      <a href="orcamentos.html" class="nav-link ativo"><span class="ni">📝</span>Orçamentos</a>
+      <a href="notas.html" class="nav-link"><span class="ni">📄</span>Notas Promissórias</a>
     </nav>
-    <div class="sidebar-rodape"><button id="btn-logout">🚪 Sair</button></div>
+    <div class="nav-rodape"><button class="btn-logout" id="btn-logout">🚪 Sair</button></div>
   </aside>
 
   <main class="conteudo">
-
-    <div class="pagina-header">
-      <div>
-        <h1 class="pagina-titulo">Orçamentos</h1>
-        <p class="pagina-subtitulo" id="total-orc">Carregando...</p>
-      </div>
-      <button class="btn-primario" style="width:auto" id="btn-novo">➕ Novo Orçamento</button>
+    <div class="pg-header">
+      <div><h1 class="pg-titulo">Orçamentos</h1><p class="pg-subtitulo" id="total"></p></div>
+      <button class="btn-primario" id="btn-novo">➕ Novo Orçamento</button>
     </div>
-
-    <div class="filtros-row">
-      <button class="btn-filtro ativo" data-filtro="todos">Todos</button>
-      <button class="btn-filtro" data-filtro="pendente">⏳ Pendentes</button>
-      <button class="btn-filtro" data-filtro="enviado">📤 Enviados</button>
-      <button class="btn-filtro" data-filtro="aprovado">✅ Aprovados</button>
-      <button class="btn-filtro" data-filtro="recusado">❌ Recusados</button>
+    <div class="filtros">
+      <button class="btn-filtro ativo" data-f="todos">Todos</button>
+      <button class="btn-filtro" data-f="pendente">⏳ Pendentes</button>
+      <button class="btn-filtro" data-f="enviado">📤 Enviados</button>
+      <button class="btn-filtro" data-f="aprovado">✅ Aprovados</button>
+      <button class="btn-filtro" data-f="recusado">❌ Recusados</button>
     </div>
-
-    <div class="tabela-wrapper">
-      <div class="tabela-header">
+    <div class="tabela-wrap">
+      <div class="tabela-topo">
         <h3>Lista de Orçamentos</h3>
-        <input type="text" class="busca-input" id="busca" placeholder="🔍 Buscar por cliente...">
+        <input type="text" class="busca" id="busca" placeholder="🔍 Cliente ou equipamento...">
       </div>
-
-      <!-- Tabela desktop -->
-      <div class="tabela-scroll">
+      <div class="tbl-scroll">
         <table>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Equipamento</th>
-              <th>Período</th>
-              <th>Valor</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabela-orc"></tbody>
+          <thead><tr><th>Cliente</th><th>Equipamento</th><th>Período</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody"></tbody>
         </table>
       </div>
-
-      <!-- Cards mobile -->
-      <div class="cards-mobile" id="cards-orc"></div>
+      <div class="cards-mob" id="cards"></div>
     </div>
-
   </main>
 
-  <!-- MODAL CADASTRO -->
-  <div class="modal-overlay" id="modal-orc">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 id="modal-titulo">Novo Orçamento</h3>
-        <button class="modal-fechar" id="btn-fechar">✕</button>
-      </div>
-      <div class="modal-corpo">
-        <form id="form-orc">
-          <div class="campos-grid">
-
-            <div class="campo campo-largo">
-              <label>Cliente *</label>
-              <select id="campo-cliente" required>
-                <option value="">Selecione o cliente...</option>
-              </select>
-            </div>
-
-            <div class="campo campo-largo">
-              <label>Equipamento *</label>
-              <select id="campo-equip" required>
-                <option value="">Selecione o equipamento...</option>
-              </select>
-            </div>
-
-            <div class="campo">
-              <label>Data de início *</label>
-              <input type="date" id="campo-inicio" required>
-            </div>
-
-            <div class="campo">
-              <label>Data de término *</label>
-              <input type="date" id="campo-fim" required>
-            </div>
-
-            <div class="campo">
-              <label>Quantidade de dias</label>
-              <input type="number" id="campo-dias" readonly style="background:var(--cinza-claro);">
-            </div>
-
-            <div class="campo">
-              <label>Valor total (R$) *</label>
-              <input type="number" id="campo-valor" step="0.01" min="0" placeholder="0,00" required>
-            </div>
-
-            <div class="campo">
-              <label>Status</label>
-              <select id="campo-status">
-                <option value="pendente">⏳ Pendente</option>
-                <option value="enviado">📤 Enviado</option>
-                <option value="aprovado">✅ Aprovado</option>
-                <option value="recusado">❌ Recusado</option>
-              </select>
-            </div>
-
-            <div class="campo">
-              <label>Validade do orçamento</label>
-              <input type="date" id="campo-validade">
-            </div>
-
-            <div class="campo campo-largo">
-              <label>Observações</label>
-              <textarea id="campo-obs" placeholder="Condições especiais, descontos, informações adicionais..."></textarea>
-            </div>
-
+  <div class="modal-overlay" id="modal">
+    <div class="modal" style="max-width:620px">
+      <div class="modal-head"><h3 id="mt">Novo Orçamento</h3><button class="modal-x" id="btn-x">✕</button></div>
+      <div class="modal-body">
+        <div class="grade">
+          <div class="campo largo"><label>Cliente *</label><select id="f-cli" required><option value="">Selecione...</option></select></div>
+          <div class="campo largo"><label>Equipamento *</label><select id="f-eq" required><option value="">Selecione...</option></select></div>
+          <div class="campo"><label>Data início *</label><input type="date" id="f-ini" required></div>
+          <div class="campo"><label>Data término *</label><input type="date" id="f-fim" required></div>
+          <div class="campo"><label>Dias</label><input type="number" id="f-dias" readonly></div>
+          <div class="campo"><label>Valor (R$) *</label><input type="number" id="f-valor" step="0.01" min="0" required></div>
+          <div class="campo"><label>Status</label>
+            <select id="f-status">
+              <option value="pendente">⏳ Pendente</option>
+              <option value="enviado">📤 Enviado</option>
+              <option value="aprovado">✅ Aprovado</option>
+              <option value="recusado">❌ Recusado</option>
+            </select>
           </div>
-
-          <!-- Preview do cálculo -->
-          <div id="preview-valor" style="display:none; margin-top:12px; padding:12px 16px; background:var(--verde-claro); border:1px solid var(--verde-borda); border-radius:var(--radius); font-size:13px; color:var(--verde-hover);">
-            💡 <span id="preview-texto"></span>
-          </div>
-
-          <input type="hidden" id="campo-id">
-          <input type="hidden" id="campo-cliente-nome">
-          <input type="hidden" id="campo-cliente-tel">
-          <input type="hidden" id="campo-equip-nome">
-          <input type="hidden" id="campo-equip-diaria">
-        </form>
+          <div class="campo"><label>Validade</label><input type="date" id="f-validade"></div>
+          <div class="campo largo"><label>Observações</label><textarea id="f-obs"></textarea></div>
+        </div>
+        <div class="preview" id="preview">💡 <span id="preview-txt"></span></div>
+        <input type="hidden" id="f-id">
+        <input type="hidden" id="f-cli-nome">
+        <input type="hidden" id="f-cli-tel">
+        <input type="hidden" id="f-eq-nome">
+        <input type="hidden" id="f-eq-diaria">
       </div>
-      <div class="modal-rodape">
-        <button class="btn-secundario" id="btn-cancelar">Cancelar</button>
-        <button class="btn-primario" id="btn-salvar" style="width:auto">💾 Salvar</button>
+      <div class="modal-foot">
+        <button class="btn-secundario" id="btn-cancel">Cancelar</button>
+        <button class="btn-primario" id="btn-salvar">💾 Salvar</button>
       </div>
     </div>
   </div>
@@ -190,313 +113,166 @@
     import { protegerPagina, logout } from "./js/auth.js";
     import { db } from "./js/firebase-config.js";
     import { showToast, formatarMoeda, formatarData, calcularDias } from "./js/utils.js";
-    import {
-      collection, getDocs, addDoc, updateDoc, deleteDoc,
-      doc, orderBy, query, serverTimestamp, Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { iniciarMenuMobile } from "./js/menu.js";
+    import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query, serverTimestamp, Timestamp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    protegerPagina();
-
-    // Logout (desktop e mobile)
+    protegerPagina(); iniciarMenuMobile();
     document.getElementById("btn-logout").addEventListener("click", logout);
     document.getElementById("btn-logout-mob").addEventListener("click", logout);
 
-    // Menu mobile
-    const gaveta  = document.getElementById("gaveta");
-    const overlay = document.getElementById("overlay");
-    document.getElementById("btn-menu").addEventListener("click", () => {
-      gaveta.classList.add("aberta");
-      overlay.classList.add("aberto");
-    });
-    overlay.addEventListener("click", () => {
-      gaveta.classList.remove("aberta");
-      overlay.classList.remove("aberto");
-    });
+    let todos=[], clientes=[], equips=[], filtro="todos";
 
-    let todos = [], clientes = [], equipamentos = [], filtroAtual = "todos";
+    function badge(s){
+      const m={pendente:"badge-pendente",enviado:"badge-enviado",aprovado:"badge-aprovado",recusado:"badge-recusado"};
+      const l={pendente:"Pendente",enviado:"Enviado",aprovado:"Aprovado",recusado:"Recusado"};
+      return `<span class="badge ${m[s]||''}">${l[s]||s}</span>`;
+    }
 
     async function iniciar() {
-      const [snapCli, snapEquip, snapOrc] = await Promise.all([
-        getDocs(query(collection(db, "clientes"), orderBy("nome"))),
-        getDocs(query(collection(db, "equipamentos"), orderBy("modelo"))),
-        getDocs(query(collection(db, "orcamentos"), orderBy("dataCriacao", "desc")))
+      const [sc,se,so]=await Promise.all([
+        getDocs(query(collection(db,"clientes"),orderBy("nome"))),
+        getDocs(query(collection(db,"equipamentos"),orderBy("modelo"))),
+        getDocs(query(collection(db,"orcamentos"),orderBy("dataCriacao","desc")))
       ]);
-      clientes     = snapCli.docs.map(d => ({ id: d.id, ...d.data() }));
-      equipamentos = snapEquip.docs.map(d => ({ id: d.id, ...d.data() }));
-      todos        = snapOrc.docs.map(d => ({ id: d.id, ...d.data() }));
-      popularSelects();
-      renderizar();
-      document.getElementById("total-orc").textContent = `${todos.length} orçamento(s)`;
+      clientes=sc.docs.map(d=>({id:d.id,...d.data()}));
+      equips=se.docs.map(d=>({id:d.id,...d.data()}));
+      todos=so.docs.map(d=>({id:d.id,...d.data()}));
+      popularSelects(); renderizar();
+      document.getElementById("total").textContent=`${todos.length} orçamento(s)`;
     }
 
-    function popularSelects() {
-      const selCli  = document.getElementById("campo-cliente");
-      const selEquip = document.getElementById("campo-equip");
-      selCli.innerHTML  = `<option value="">Selecione o cliente...</option>`;
-      selEquip.innerHTML = `<option value="">Selecione o equipamento...</option>`;
-      clientes.forEach(c => {
-        selCli.innerHTML += `<option value="${c.id}" data-nome="${c.nome}" data-tel="${c.telefone||''}">${c.nome}</option>`;
-      });
-      equipamentos.forEach(e => {
-        selEquip.innerHTML += `<option value="${e.id}" data-nome="${e.modelo}" data-diaria="${e.diaria}">${e.codigo} — ${e.modelo} · R$${e.diaria}/dia</option>`;
-      });
+    function popularSelects(){
+      const sc=document.getElementById("f-cli");sc.innerHTML=`<option value="">Selecione...</option>`;
+      const se=document.getElementById("f-eq");se.innerHTML=`<option value="">Selecione...</option>`;
+      clientes.forEach(c=>sc.innerHTML+=`<option value="${c.id}" data-nome="${c.nome}" data-tel="${c.telefone||""}">${c.nome}</option>`);
+      equips.forEach(e=>se.innerHTML+=`<option value="${e.id}" data-nome="${e.modelo}" data-diaria="${e.diaria}">${e.codigo} — ${e.modelo} · R$${e.diaria}/dia</option>`);
     }
 
-    function badgeOrc(status) {
-      const map = {
-        pendente: 'badge-pendente', enviado: 'badge-enviado',
-        aprovado: 'badge-aprovado', recusado: 'badge-recusado'
-      };
-      const label = { pendente:'Pendente', enviado:'Enviado', aprovado:'Aprovado', recusado:'Recusado' };
-      return `<span class="badge ${map[status]||''}">${label[status]||status}</span>`;
+    function renderizar(){
+      const q=document.getElementById("busca").value.toLowerCase();
+      let lista=filtro==="todos"?todos:todos.filter(o=>o.status===filtro);
+      if(q)lista=lista.filter(o=>(o.nomeCliente||"").toLowerCase().includes(q)||(o.nomeEquipamento||"").toLowerCase().includes(q));
+
+      document.getElementById("tbody").innerHTML=lista.length?lista.map(o=>`<tr>
+        <td><strong>${o.nomeCliente||"—"}</strong></td>
+        <td>${o.nomeEquipamento||"—"}</td>
+        <td class="ts">${formatarData(o.dataInicio)} → ${formatarData(o.dataFim)}</td>
+        <td><strong>${formatarMoeda(o.valor)}</strong></td>
+        <td>${badge(o.status)}</td>
+        <td><div class="acoes">
+          <button class="btn-icon" onclick="editar('${o.id}')">✏️</button>
+          <button class="btn-icon" onclick="enviarWhats('${o.id}')">💬</button>
+          ${o.status==="aprovado"?`<button class="btn-icon" title="Converter em contrato" onclick="window.location.href='contratos.html'">📋</button>`:""}
+          <button class="btn-icon btn-perigo" onclick="excluir('${o.id}')">🗑️</button>
+        </div></td></tr>`).join(""):`<tr><td colspan="6"><div class="vazio"><div class="vi">📝</div><p>Nenhum orçamento.</p></div></td></tr>`;
+
+      document.getElementById("cards").innerHTML=lista.length?lista.map(o=>`
+        <div class="card-mob">
+          <div class="card-mob-head">
+            <div><div class="card-mob-nome">${o.nomeCliente||"—"}</div><div class="card-mob-sub">${o.nomeEquipamento||""}</div></div>
+            ${badge(o.status)}
+          </div>
+          <div class="card-mob-linha"><span class="card-mob-label">Período</span><span>${formatarData(o.dataInicio)} → ${formatarData(o.dataFim)}</span></div>
+          <div class="card-mob-linha"><span class="card-mob-label">Valor</span><strong style="color:var(--verde)">${formatarMoeda(o.valor)}</strong></div>
+          <div class="card-mob-btns">
+            <button class="card-mob-btn" onclick="editar('${o.id}')">✏️ Editar</button>
+            <button class="card-mob-btn verde" onclick="enviarWhats('${o.id}')">💬 WhatsApp</button>
+            <button class="card-mob-btn vermelho" onclick="excluir('${o.id}')">🗑️</button>
+          </div>
+        </div>`).join(""):`<div class="vazio"><div class="vi">📝</div><p>Nenhum orçamento.</p></div>`;
     }
 
-    function getLista() {
-      const busca = document.getElementById("busca").value.toLowerCase();
-      let lista = todos;
-      if (filtroAtual !== "todos") lista = lista.filter(o => o.status === filtroAtual);
-      if (busca) lista = lista.filter(o =>
-        (o.nomeCliente||"").toLowerCase().includes(busca) ||
-        (o.nomeEquipamento||"").toLowerCase().includes(busca)
-      );
-      return lista;
+    document.querySelectorAll(".btn-filtro").forEach(b=>b.addEventListener("click",()=>{
+      document.querySelectorAll(".btn-filtro").forEach(x=>x.classList.remove("ativo"));b.classList.add("ativo");filtro=b.dataset.f;renderizar();
+    }));
+    document.getElementById("busca").addEventListener("input",renderizar);
+
+    function calcular(){
+      const ini=document.getElementById("f-ini").value,fim=document.getElementById("f-fim").value;
+      const diaria=parseFloat(document.getElementById("f-eq-diaria").value)||0;
+      if(!ini||!fim)return;
+      const dias=calcularDias(ini,fim);if(dias<=0)return;
+      document.getElementById("f-dias").value=dias;
+      if(diaria>0){const v=dias*diaria;document.getElementById("f-valor").value=v.toFixed(2);document.getElementById("preview").style.display="block";document.getElementById("preview-txt").textContent=`${dias} dia(s) × ${formatarMoeda(diaria)}/dia = ${formatarMoeda(v)}`;}
     }
-
-    function renderizar() {
-      const lista = getLista();
-
-      // Tabela desktop
-      const tbody = document.getElementById("tabela-orc");
-      if (lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="estado-vazio"><div class="icone-vazio">📝</div><p>Nenhum orçamento encontrado.</p></div></td></tr>`;
-      } else {
-        tbody.innerHTML = lista.map(o => `
-          <tr>
-            <td><strong>${o.nomeCliente||"—"}</strong></td>
-            <td>${o.nomeEquipamento||"—"}</td>
-            <td style="font-size:13px;">${formatarData(o.dataInicio)} até ${formatarData(o.dataFim)}</td>
-            <td><strong>${formatarMoeda(o.valor)}</strong></td>
-            <td>${badgeOrc(o.status)}</td>
-            <td>
-              <div class="td-acoes">
-                <button class="btn-icon" title="Editar" onclick="editar('${o.id}')">✏️</button>
-                <button class="btn-icon" title="WhatsApp" onclick="enviarWhats('${o.id}')">💬</button>
-                ${o.status === 'aprovado'
-                  ? `<button class="btn-icon" title="Converter em contrato" onclick="converter('${o.id}')" style="color:var(--verde)">📋</button>`
-                  : ''}
-                <button class="btn-icon btn-perigo" title="Excluir" onclick="excluir('${o.id}')">🗑️</button>
-              </div>
-            </td>
-          </tr>`).join("");
-      }
-
-      // Cards mobile
-      const cards = document.getElementById("cards-orc");
-      if (lista.length === 0) {
-        cards.innerHTML = `<div class="estado-vazio"><div class="icone-vazio">📝</div><p>Nenhum orçamento encontrado.</p></div>`;
-      } else {
-        cards.innerHTML = lista.map(o => `
-          <div class="card-item">
-            <div class="card-item-header">
-              <div>
-                <div class="card-item-titulo">${o.nomeCliente||"—"}</div>
-                <div class="card-item-detalhe">${o.nomeEquipamento||"—"}</div>
-              </div>
-              ${badgeOrc(o.status)}
-            </div>
-            <div class="card-item-linha">
-              <span class="card-item-label">Período</span>
-              <span>${formatarData(o.dataInicio)} → ${formatarData(o.dataFim)}</span>
-            </div>
-            <div class="card-item-linha">
-              <span class="card-item-label">Valor</span>
-              <strong style="color:var(--verde)">${formatarMoeda(o.valor)}</strong>
-            </div>
-            <div class="card-item-acoes">
-              <button class="btn-acao" onclick="editar('${o.id}')">✏️ Editar</button>
-              <button class="btn-acao verde" onclick="enviarWhats('${o.id}')">💬 WhatsApp</button>
-              ${o.status === 'aprovado'
-                ? `<button class="btn-acao verde" onclick="converter('${o.id}')">📋 Converter</button>`
-                : ''}
-              <button class="btn-acao vermelho" onclick="excluir('${o.id}')">🗑️</button>
-            </div>
-          </div>`).join("");
-      }
-    }
-
-    document.querySelectorAll(".btn-filtro").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".btn-filtro").forEach(b => b.classList.remove("ativo"));
-        btn.classList.add("ativo");
-        filtroAtual = btn.dataset.filtro;
-        renderizar();
-      });
-    });
-    document.getElementById("busca").addEventListener("input", renderizar);
-
-    // Cálculo automático
-    function calcular() {
-      const inicio = document.getElementById("campo-inicio").value;
-      const fim    = document.getElementById("campo-fim").value;
-      const diaria = parseFloat(document.getElementById("campo-equip-diaria").value) || 0;
-      if (!inicio || !fim) return;
-      const dias = calcularDias(inicio, fim);
-      if (dias <= 0) return;
-      document.getElementById("campo-dias").value = dias;
-      if (diaria > 0) {
-        const val = dias * diaria;
-        document.getElementById("campo-valor").value = val.toFixed(2);
-        document.getElementById("preview-valor").style.display = "block";
-        document.getElementById("preview-texto").textContent =
-          `${dias} dia(s) × ${formatarMoeda(diaria)}/dia = ${formatarMoeda(val)}`;
-      }
-    }
-
-    document.getElementById("campo-inicio").addEventListener("change", calcular);
-    document.getElementById("campo-fim").addEventListener("change", calcular);
-
-    document.getElementById("campo-equip").addEventListener("change", function() {
-      const opt = this.options[this.selectedIndex];
-      document.getElementById("campo-equip-nome").value   = opt.dataset.nome   || "";
-      document.getElementById("campo-equip-diaria").value = opt.dataset.diaria || "0";
+    document.getElementById("f-ini").addEventListener("change",calcular);
+    document.getElementById("f-fim").addEventListener("change",calcular);
+    document.getElementById("f-eq").addEventListener("change",function(){
+      const o=this.options[this.selectedIndex];
+      document.getElementById("f-eq-nome").value=o.dataset.nome||"";
+      document.getElementById("f-eq-diaria").value=o.dataset.diaria||"0";
       calcular();
     });
-
-    document.getElementById("campo-cliente").addEventListener("change", function() {
-      const opt = this.options[this.selectedIndex];
-      document.getElementById("campo-cliente-nome").value = opt.dataset.nome || "";
-      document.getElementById("campo-cliente-tel").value  = opt.dataset.tel  || "";
+    document.getElementById("f-cli").addEventListener("change",function(){
+      const o=this.options[this.selectedIndex];
+      document.getElementById("f-cli-nome").value=o.dataset.nome||"";
+      document.getElementById("f-cli-tel").value=o.dataset.tel||"";
     });
 
-    // Modal
-    function abrirModal(titulo = "Novo Orçamento") {
-      document.getElementById("modal-titulo").textContent = titulo;
-      document.getElementById("modal-orc").classList.add("aberto");
-      document.getElementById("campo-inicio").value = new Date().toISOString().split("T")[0];
-    }
+    function abrirModal(t){document.getElementById("mt").textContent=t;document.getElementById("modal").classList.add("aberto");document.getElementById("f-ini").value=new Date().toISOString().split("T")[0];}
+    function fecharModal(){document.getElementById("modal").classList.remove("aberto");["f-cli","f-eq","f-ini","f-fim","f-dias","f-valor","f-obs","f-validade"].forEach(i=>{const el=document.getElementById(i);if(el)el.value="";});document.getElementById("f-status").value="pendente";["f-id","f-cli-nome","f-cli-tel","f-eq-nome","f-eq-diaria"].forEach(i=>document.getElementById(i).value="");document.getElementById("preview").style.display="none";}
 
-    function fecharModal() {
-      document.getElementById("modal-orc").classList.remove("aberto");
-      document.getElementById("form-orc").reset();
-      document.getElementById("campo-id").value = "";
-      document.getElementById("preview-valor").style.display = "none";
-    }
+    document.getElementById("btn-novo").addEventListener("click",()=>abrirModal("Novo Orçamento"));
+    document.getElementById("btn-x").addEventListener("click",fecharModal);
+    document.getElementById("btn-cancel").addEventListener("click",fecharModal);
+    document.getElementById("modal").addEventListener("click",e=>{if(e.target===e.currentTarget)fecharModal();});
 
-    document.getElementById("btn-novo").addEventListener("click", () => abrirModal());
-    document.getElementById("btn-fechar").addEventListener("click", fecharModal);
-    document.getElementById("btn-cancelar").addEventListener("click", fecharModal);
-    document.getElementById("modal-orc").addEventListener("click", e => { if (e.target === e.currentTarget) fecharModal(); });
-
-    // Salvar
-    document.getElementById("btn-salvar").addEventListener("click", async () => {
-      const id          = document.getElementById("campo-id").value;
-      const clienteId   = document.getElementById("campo-cliente").value;
-      const equipId     = document.getElementById("campo-equip").value;
-      const inicio      = document.getElementById("campo-inicio").value;
-      const fim         = document.getElementById("campo-fim").value;
-      const valor       = parseFloat(document.getElementById("campo-valor").value) || 0;
-      const nomeCliente = document.getElementById("campo-cliente-nome").value;
-      const telCliente  = document.getElementById("campo-cliente-tel").value;
-      const nomeEquip   = document.getElementById("campo-equip-nome").value;
-
-      if (!clienteId || !equipId || !inicio || !fim || !valor) {
-        showToast("Preencha todos os campos obrigatórios.", "aviso"); return;
-      }
-
-      const dados = {
-        clienteId, equipamentoId: equipId,
-        nomeCliente, nomeEquipamento: nomeEquip, telefoneCliente: telCliente,
-        dataInicio:  Timestamp.fromDate(new Date(inicio + "T00:00:00")),
-        dataFim:     Timestamp.fromDate(new Date(fim    + "T23:59:59")),
-        dias:        parseInt(document.getElementById("campo-dias").value) || 0,
-        valor,
-        status:      document.getElementById("campo-status").value,
-        obs:         document.getElementById("campo-obs").value.trim(),
-        validade:    document.getElementById("campo-validade").value,
-      };
-
-      const btn = document.getElementById("btn-salvar");
-      btn.textContent = "Salvando..."; btn.disabled = true;
-
-      try {
-        if (id) {
-          await updateDoc(doc(db, "orcamentos", id), dados);
-          showToast("Orçamento atualizado!", "sucesso");
-        } else {
-          dados.dataCriacao = serverTimestamp();
-          await addDoc(collection(db, "orcamentos"), dados);
-          showToast("Orçamento criado!", "sucesso");
-        }
-        fecharModal(); await iniciar();
-      } catch (err) {
-        showToast("Erro ao salvar.", "erro");
-      } finally {
-        btn.textContent = "💾 Salvar"; btn.disabled = false;
-      }
+    document.getElementById("btn-salvar").addEventListener("click",async()=>{
+      const id=document.getElementById("f-id").value;
+      const cliId=document.getElementById("f-cli").value;
+      const eqId=document.getElementById("f-eq").value;
+      const ini=document.getElementById("f-ini").value;
+      const fim=document.getElementById("f-fim").value;
+      const valor=parseFloat(document.getElementById("f-valor").value)||0;
+      if(!cliId||!eqId||!ini||!fim||!valor){showToast("Preencha os campos obrigatórios.","aviso");return;}
+      const d={clienteId:cliId,equipamentoId:eqId,nomeCliente:document.getElementById("f-cli-nome").value,nomeEquipamento:document.getElementById("f-eq-nome").value,telefoneCliente:document.getElementById("f-cli-tel").value,dataInicio:Timestamp.fromDate(new Date(ini+"T00:00:00")),dataFim:Timestamp.fromDate(new Date(fim+"T23:59:59")),dias:parseInt(document.getElementById("f-dias").value)||0,valor,status:document.getElementById("f-status").value,obs:document.getElementById("f-obs").value.trim(),validade:document.getElementById("f-validade").value};
+      const btn=document.getElementById("btn-salvar");btn.textContent="Salvando...";btn.disabled=true;
+      try{
+        if(id){await updateDoc(doc(db,"orcamentos",id),d);showToast("Orçamento atualizado!");}
+        else{d.dataCriacao=serverTimestamp();await addDoc(collection(db,"orcamentos"),d);showToast("Orçamento criado!");}
+        fecharModal();await iniciar();
+      }catch(e){showToast("Erro.","erro");}
+      finally{btn.textContent="💾 Salvar";btn.disabled=false;}
     });
 
-    window.editar = function(id) {
-      const o = todos.find(x => x.id === id); if (!o) return;
-      const toDate = d => d?.toDate ? d.toDate().toISOString().split("T")[0] : "";
-      document.getElementById("campo-id").value         = o.id;
-      document.getElementById("campo-cliente").value    = o.clienteId    || "";
-      document.getElementById("campo-equip").value      = o.equipamentoId|| "";
-      document.getElementById("campo-cliente-nome").value = o.nomeCliente || "";
-      document.getElementById("campo-cliente-tel").value  = o.telefoneCliente || "";
-      document.getElementById("campo-equip-nome").value   = o.nomeEquipamento || "";
-      document.getElementById("campo-inicio").value     = toDate(o.dataInicio);
-      document.getElementById("campo-fim").value        = toDate(o.dataFim);
-      document.getElementById("campo-dias").value       = o.dias   || "";
-      document.getElementById("campo-valor").value      = o.valor  || "";
-      document.getElementById("campo-status").value     = o.status || "pendente";
-      document.getElementById("campo-obs").value        = o.obs    || "";
-      document.getElementById("campo-validade").value   = o.validade || "";
+    window.editar=id=>{
+      const o=todos.find(x=>x.id===id);if(!o)return;
+      const td=d=>d?.toDate?d.toDate().toISOString().split("T")[0]:"";
+      document.getElementById("f-id").value=o.id;
+      document.getElementById("f-cli").value=o.clienteId||"";
+      document.getElementById("f-eq").value=o.equipamentoId||"";
+      document.getElementById("f-cli-nome").value=o.nomeCliente||"";
+      document.getElementById("f-cli-tel").value=o.telefoneCliente||"";
+      document.getElementById("f-eq-nome").value=o.nomeEquipamento||"";
+      document.getElementById("f-ini").value=td(o.dataInicio);
+      document.getElementById("f-fim").value=td(o.dataFim);
+      document.getElementById("f-dias").value=o.dias||"";
+      document.getElementById("f-valor").value=o.valor||"";
+      document.getElementById("f-status").value=o.status||"pendente";
+      document.getElementById("f-obs").value=o.obs||"";
+      document.getElementById("f-validade").value=o.validade||"";
       abrirModal("Editar Orçamento");
     };
 
-    window.enviarWhats = function(id) {
-      const o = todos.find(x => x.id === id); if (!o) return;
-      const tel = (o.telefoneCliente || "").replace(/\D/g, "");
-      if (!tel) { showToast("Cliente sem telefone cadastrado.", "aviso"); return; }
-      const msg = `📝 *Orçamento VoltRent*
-
-Olá, *${o.nomeCliente}*!
-
-Segue seu orçamento de locação:
-
-🛵 *Equipamento:* ${o.nomeEquipamento}
-📅 *Período:* ${formatarData(o.dataInicio)} até ${formatarData(o.dataFim)}
-⏱️ *Duração:* ${o.dias} dia(s)
-💰 *Valor Total:* ${formatarMoeda(o.valor)}
-${o.validade ? `📌 *Válido até:* ${o.validade}` : ""}
-
-Para confirmar ou tirar dúvidas, é só responder esta mensagem! 😊🛵`;
-      window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, "_blank");
-
-      // Marca como enviado automaticamente
-      updateDoc(doc(db, "orcamentos", id), { status: "enviado" });
-      const idx = todos.findIndex(x => x.id === id);
-      if (idx >= 0) todos[idx].status = "enviado";
-      renderizar();
+    window.enviarWhats=id=>{
+      const o=todos.find(x=>x.id===id);if(!o)return;
+      const tel=(o.telefoneCliente||"").replace(/\D/g,"");
+      if(!tel){showToast("Sem telefone.","aviso");return;}
+      const msg=`📝 *Orçamento VoltRent*\n\nOlá, *${o.nomeCliente}*!\n\n🛵 *Equipamento:* ${o.nomeEquipamento}\n📅 *Período:* ${formatarData(o.dataInicio)} até ${formatarData(o.dataFim)}\n⏱️ *Duração:* ${o.dias} dia(s)\n💰 *Valor:* ${formatarMoeda(o.valor)}${o.validade?"\n📌 *Válido até:* "+o.validade:""}\n\nPara confirmar, responda esta mensagem! 😊🛵`;
+      window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`,"_blank");
+      updateDoc(doc(db,"orcamentos",id),{status:"enviado"});
+      const idx=todos.findIndex(x=>x.id===id);if(idx>=0)todos[idx].status="enviado";renderizar();
     };
 
-    window.converter = async function(id) {
-      const o = todos.find(x => x.id === id); if (!o) return;
-      if (!confirm(`Converter o orçamento de "${o.nomeCliente}" em contrato?`)) return;
-      window.location.href = `contratos.html?orcamento=${id}`;
-    };
-
-    window.excluir = async function(id) {
-      const o = todos.find(x => x.id === id);
-      if (!confirm(`Excluir orçamento de "${o?.nomeCliente}"?`)) return;
-      try {
-        await deleteDoc(doc(db, "orcamentos", id));
-        showToast("Orçamento excluído.", "sucesso"); await iniciar();
-      } catch (err) { showToast("Erro ao excluir.", "erro"); }
+    window.excluir=async id=>{
+      const o=todos.find(x=>x.id===id);
+      if(!confirm(`Excluir orçamento de "${o?.nomeCliente}"?`))return;
+      try{await deleteDoc(doc(db,"orcamentos",id));showToast("Excluído.");await iniciar();}
+      catch(e){showToast("Erro.","erro");}
     };
 
     iniciar();
   </script>
-
 </body>
 </html>
