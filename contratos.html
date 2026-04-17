@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltRent — Contratos</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
+    <div class="sidebar-secao">Principal</div>
+    <nav>
+      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
+      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
+      <a href="equipamentos.html"><span class="icone">🛵</span> Equipamentos</a>
+      <a href="contratos.html" class="ativo"><span class="icone">📋</span> Contratos</a>
+    </nav>
+    <div class="sidebar-secao">Financeiro</div>
+    <nav>
+      <a href="financeiro.html"><span class="icone">💰</span> Financeiro</a>
+      <a href="orcamentos.html"><span class="icone">📝</span> Orçamentos</a>
+      <a href="notas.html"><span class="icone">📄</span> Notas Promissórias</a>
+    </nav>
+    <div class="sidebar-rodape">
+      <button id="btn-logout">🚪 Sair</button>
+    </div>
+  </aside>
+
+  <main class="conteudo">
+
+    <div class="pagina-header">
+      <div>
+        <h1 class="pagina-titulo">Contratos</h1>
+        <p class="pagina-subtitulo" id="total-contratos">Carregando...</p>
+      </div>
+      <button class="btn-primario" style="width:auto" id="btn-novo">➕ Novo Contrato</button>
+    </div>
+
+    <!-- Filtros -->
+    <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+      <button class="btn-filtro ativo" data-filtro="todos">Todos</button>
+      <button class="btn-filtro" data-filtro="ativo">🟢 Ativos</button>
+      <button class="btn-filtro" data-filtro="atrasado">🔴 Atrasados</button>
+      <button class="btn-filtro" data-filtro="finalizado">⚫ Finalizados</button>
+    </div>
+
+    <div class="tabela-wrapper">
+      <div class="tabela-header">
+        <h3>Lista de Contratos</h3>
+        <input type="text" class="busca-input" id="busca" placeholder="🔍 Buscar por cliente ou equipamento...">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Equipamento</th>
+            <th>Período</th>
+            <th>Dias</th>
+            <th>Valor Total</th>
+            <th>Pagamento</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-contratos">
+          <tr><td colspan="8"><div class="estado-vazio"><div class="icone-vazio">⏳</div><p>Carregando...</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- MODAL NOVO/EDITAR CONTRATO -->
+  <div class="modal-overlay" id="modal-contrato">
+    <div class="modal" style="max-width:680px">
+      <div class="modal-header">
+        <h3 id="modal-titulo">Novo Contrato</h3>
+        <button class="modal-fechar" id="btn-fechar">✕</button>
+      </div>
+      <div class="modal-corpo">
+        <form id="form-contrato">
+          <div class="campos-grid">
+
+            <!-- Cliente -->
+            <div class="campo campo-largo">
+              <label>Cliente *</label>
+              <select id="campo-cliente" required>
+                <option value="">Selecione o cliente...</option>
+              </select>
+            </div>
+
+            <!-- Equipamento -->
+            <div class="campo campo-largo">
+              <label>Equipamento *</label>
+              <select id="campo-equip" required>
+                <option value="">Selecione o equipamento...</option>
+              </select>
+            </div>
+
+            <!-- Datas -->
+            <div class="campo">
+              <label>Data de início *</label>
+              <input type="date" id="campo-inicio" required>
+            </div>
+
+            <div class="campo">
+              <label>Data de término *</label>
+              <input type="date" id="campo-fim" required>
+            </div>
+
+            <!-- Calculado automaticamente -->
+            <div class="campo">
+              <label>Quantidade de dias</label>
+              <input type="number" id="campo-dias" readonly style="background:var(--cinza-claro); cursor:not-allowed;" placeholder="Calculado automaticamente">
+            </div>
+
+            <div class="campo">
+              <label>Valor total (R$) *</label>
+              <input type="number" id="campo-valor" step="0.01" min="0" placeholder="0,00" required>
+            </div>
+
+            <div class="campo">
+              <label>Caução (R$)</label>
+              <input type="number" id="campo-caucao" step="0.01" min="0" placeholder="0,00">
+            </div>
+
+            <div class="campo">
+              <label>Forma de pagamento *</label>
+              <select id="campo-pagamento" required>
+                <option value="">Selecione...</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="PIX">PIX</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+                <option value="Transferência">Transferência</option>
+                <option value="Boleto">Boleto</option>
+              </select>
+            </div>
+
+            <div class="campo campo-largo">
+              <label>Observações</label>
+              <textarea id="campo-obs" placeholder="Condições especiais, acessórios entregues, etc."></textarea>
+            </div>
+
+          </div>
+
+          <!-- Preview do valor calculado -->
+          <div id="preview-valor" style="display:none; margin-top:12px; padding:14px 16px; background:var(--verde-claro); border:1px solid var(--verde-borda); border-radius:var(--radius);">
+            <div style="font-size:13px; color:var(--verde-hover);">
+              💡 <span id="preview-texto"></span>
+            </div>
+          </div>
+
+          <input type="hidden" id="campo-id">
+          <input type="hidden" id="campo-cliente-nome">
+          <input type="hidden" id="campo-equip-nome">
+          <input type="hidden" id="campo-equip-diaria">
+          <input type="hidden" id="campo-cliente-tel">
+        </form>
+      </div>
+      <div class="modal-rodape">
+        <button class="btn-secundario" id="btn-cancelar">Cancelar</button>
+        <button class="btn-primario" id="btn-salvar" style="width:auto">💾 Salvar Contrato</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DETALHES DO CONTRATO -->
+  <div class="modal-overlay" id="modal-detalhe">
+    <div class="modal" style="max-width:600px">
+      <div class="modal-header">
+        <h3>Detalhes do Contrato</h3>
+        <button class="modal-fechar" id="btn-fechar-detalhe">✕</button>
+      </div>
+      <div class="modal-corpo" id="corpo-detalhe"></div>
+      <div class="modal-rodape" id="rodape-detalhe"></div>
+    </div>
+  </div>
+
+  <style>
+    .btn-filtro {
+      padding: 7px 16px; border: 1px solid var(--cinza-medio);
+      border-radius: 99px; background: white; font-size: 13px;
+      cursor: pointer; transition: all .15s; color: var(--texto-suave);
+    }
+    .btn-filtro:hover { background: var(--cinza-claro); }
+    .btn-filtro.ativo { background: var(--verde); color: white; border-color: var(--verde); font-weight: 600; }
+    .detalhe-linha { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--cinza-medio); font-size:14px; }
+    .detalhe-linha:last-child { border-bottom:none; }
+    .detalhe-label { color:var(--cinza); }
+    .detalhe-valor { font-weight:500; text-align:right; }
+  </style>
+
+  <script type="module">
+    import { protegerPagina, logout } from "./js/auth.js";
+    import { db } from "./js/firebase-config.js";
+    import { showToast, formatarMoeda, formatarData, calcularDias, isAtrasado, badgeContrato, gerarLinkWhatsApp } from "./js/utils.js";
+    import {
+      collection, getDocs, addDoc, updateDoc, deleteDoc,
+      doc, orderBy, query, serverTimestamp, Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    protegerPagina();
+    document.getElementById("btn-logout").addEventListener("click", logout);
+
+    let todos = [];
+    let clientes = [];
+    let equipamentos = [];
+    let filtroAtual = "todos";
+
+    // ----------------------------------------
+    // Carrega dados iniciais
+    // ----------------------------------------
+    async function iniciar() {
+      try {
+        const [snapCli, snapEquip, snapCont] = await Promise.all([
+          getDocs(query(collection(db, "clientes"), orderBy("nome"))),
+          getDocs(query(collection(db, "equipamentos"), orderBy("modelo"))),
+          getDocs(query(collection(db, "contratos"), orderBy("dataCriacao", "desc")))
+        ]);
+
+        clientes     = snapCli.docs.map(d => ({ id: d.id, ...d.data() }));
+        equipamentos = snapEquip.docs.map(d => ({ id: d.id, ...d.data() }));
+        todos        = snapCont.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // Verifica e atualiza contratos atrasados automaticamente
+        await verificarAtrasos();
+
+        popularSelects();
+        renderizar();
+        atualizarContador();
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao carregar dados.", "erro");
+      }
+    }
+
+    // ----------------------------------------
+    // Verifica e marca contratos como atrasados
+    // ----------------------------------------
+    async function verificarAtrasos() {
+      const atualizacoes = [];
+      todos.forEach(c => {
+        if (c.status === "ativo" && isAtrasado(c.dataFim, c.status)) {
+          atualizacoes.push(updateDoc(doc(db, "contratos", c.id), { status: "atrasado" }));
+          c.status = "atrasado";
+        }
+      });
+      if (atualizacoes.length > 0) await Promise.all(atualizacoes);
+    }
+
+    // ----------------------------------------
+    // Popula os selects de clientes e equipamentos
+    // ----------------------------------------
+    function popularSelects() {
+      const selCli  = document.getElementById("campo-cliente");
+      const selEquip = document.getElementById("campo-equip");
+
+      selCli.innerHTML  = `<option value="">Selecione o cliente...</option>`;
+      selEquip.innerHTML = `<option value="">Selecione o equipamento...</option>`;
+
+      clientes.forEach(c => {
+        selCli.innerHTML += `<option value="${c.id}" data-nome="${c.nome}" data-tel="${c.telefone || ''}">${c.nome} — ${c.cpf || ""}</option>`;
+      });
+
+      // Só mostra equipamentos disponíveis para novos contratos
+      equipamentos.forEach(e => {
+        const label = `${e.codigo} — ${e.modelo} (${e.tipo}) · R$${e.diaria}/dia`;
+        selEquip.innerHTML += `<option value="${e.id}" data-nome="${e.modelo}" data-diaria="${e.diaria}" data-status="${e.status}">${label}</option>`;
+      });
+    }
+
+    // ----------------------------------------
+    // Contador no topo
+    // ----------------------------------------
+    function atualizarContador() {
+      const ativos    = todos.filter(c => c.status === "ativo").length;
+      const atrasados = todos.filter(c => c.status === "atrasado").length;
+      document.getElementById("total-contratos").textContent =
+        `${todos.length} contrato(s) · ${ativos} ativo(s) · ${atrasados} atrasado(s)`;
+    }
+
+    // ----------------------------------------
+    // Renderiza tabela
+    // ----------------------------------------
+    function renderizar() {
+      const busca = document.getElementById("busca").value.toLowerCase();
+      let lista = todos;
+
+      if (filtroAtual !== "todos") lista = lista.filter(c => c.status === filtroAtual);
+      if (busca) lista = lista.filter(c =>
+        (c.nomeCliente    || "").toLowerCase().includes(busca) ||
+        (c.nomeEquipamento|| "").toLowerCase().includes(busca)
+      );
+
+      const tbody = document.getElementById("tabela-contratos");
+      if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8"><div class="estado-vazio"><div class="icone-vazio">📋</div><p>Nenhum contrato encontrado.</p></div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = lista.map(c => `
+        <tr>
+          <td><strong>${c.nomeCliente || "—"}</strong></td>
+          <td>${c.nomeEquipamento || "—"}</td>
+          <td style="font-size:13px;">
+            ${formatarData(c.dataInicio)}<br>
+            <span class="texto-cinza">até ${formatarData(c.dataFim)}</span>
+          </td>
+          <td>${c.dias || "—"} dias</td>
+          <td><strong>${formatarMoeda(c.valorTotal)}</strong></td>
+          <td style="font-size:13px;">${c.formaPagamento || "—"}</td>
+          <td>${badgeContrato(c.status)}</td>
+          <td>
+            <div class="td-acoes">
+              <button class="btn-icon" title="Ver detalhes" onclick="verDetalhe('${c.id}')">👁️</button>
+              ${c.status !== "finalizado"
+                ? `<button class="btn-icon" title="Finalizar contrato" onclick="finalizar('${c.id}')">✅</button>`
+                : ""}
+              <button class="btn-icon" title="WhatsApp" onclick="msgWhats('${c.id}')">💬</button>
+              <button class="btn-icon btn-perigo" title="Excluir" onclick="excluir('${c.id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>`).join("");
+    }
+
+    // Filtros
+    document.querySelectorAll(".btn-filtro").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".btn-filtro").forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+        filtroAtual = btn.dataset.filtro;
+        renderizar();
+      });
+    });
+
+    document.getElementById("busca").addEventListener("input", renderizar);
+
+    // ----------------------------------------
+    // Cálculo automático de dias e valor
+    // ----------------------------------------
+    function calcularAutomatico() {
+      const inicio = document.getElementById("campo-inicio").value;
+      const fim    = document.getElementById("campo-fim").value;
+      const diaria = parseFloat(document.getElementById("campo-equip-diaria").value) || 0;
+
+      if (!inicio || !fim) return;
+
+      const dias = calcularDias(inicio, fim);
+      if (dias <= 0) {
+        document.getElementById("campo-dias").value = "";
+        return;
+      }
+
+      document.getElementById("campo-dias").value = dias;
+
+      if (diaria > 0) {
+        const valorCalculado = dias * diaria;
+        document.getElementById("campo-valor").value = valorCalculado.toFixed(2);
+        document.getElementById("preview-valor").style.display = "block";
+        document.getElementById("preview-texto").textContent =
+          `${dias} dia(s) × ${formatarMoeda(diaria)}/dia = ${formatarMoeda(valorCalculado)} (você pode ajustar o valor acima)`;
+      }
+    }
+
+    document.getElementById("campo-inicio").addEventListener("change", calcularAutomatico);
+    document.getElementById("campo-fim").addEventListener("change", calcularAutomatico);
+
+    // Ao selecionar equipamento, salva a diária para cálculo
+    document.getElementById("campo-equip").addEventListener("change", function() {
+      const opt = this.options[this.selectedIndex];
+      document.getElementById("campo-equip-nome").value   = opt.dataset.nome   || "";
+      document.getElementById("campo-equip-diaria").value = opt.dataset.diaria  || "0";
+      calcularAutomatico();
+    });
+
+    document.getElementById("campo-cliente").addEventListener("change", function() {
+      const opt = this.options[this.selectedIndex];
+      document.getElementById("campo-cliente-nome").value = opt.dataset.nome || "";
+      document.getElementById("campo-cliente-tel").value  = opt.dataset.tel  || "";
+    });
+
+    // ----------------------------------------
+    // Modal abrir/fechar
+    // ----------------------------------------
+    function abrirModal() {
+      document.getElementById("modal-contrato").classList.add("aberto");
+      // Preenche a data de início com hoje
+      document.getElementById("campo-inicio").value = new Date().toISOString().split("T")[0];
+    }
+
+    function fecharModal() {
+      document.getElementById("modal-contrato").classList.remove("aberto");
+      document.getElementById("form-contrato").reset();
+      document.getElementById("campo-id").value = "";
+      document.getElementById("campo-equip-diaria").value = "";
+      document.getElementById("preview-valor").style.display = "none";
+    }
+
+    document.getElementById("btn-novo").addEventListener("click", abrirModal);
+    document.getElementById("btn-fechar").addEventListener("click", fecharModal);
+    document.getElementById("btn-cancelar").addEventListener("click", fecharModal);
+    document.getElementById("modal-contrato").addEventListener("click", e => { if (e.target === e.currentTarget) fecharModal(); });
+
+    // ----------------------------------------
+    // SALVAR CONTRATO + automações
+    // ----------------------------------------
+    document.getElementById("btn-salvar").addEventListener("click", async () => {
+      const clienteId   = document.getElementById("campo-cliente").value;
+      const equipId     = document.getElementById("campo-equip").value;
+      const inicio      = document.getElementById("campo-inicio").value;
+      const fim         = document.getElementById("campo-fim").value;
+      const valor       = parseFloat(document.getElementById("campo-valor").value) || 0;
+      const caucao      = parseFloat(document.getElementById("campo-caucao").value) || 0;
+      const pagamento   = document.getElementById("campo-pagamento").value;
+      const dias        = parseInt(document.getElementById("campo-dias").value) || 0;
+      const nomeCliente = document.getElementById("campo-cliente-nome").value;
+      const nomeEquip   = document.getElementById("campo-equip-nome").value;
+      const telCliente  = document.getElementById("campo-cliente-tel").value;
+
+      if (!clienteId || !equipId || !inicio || !fim || !valor || !pagamento) {
+        showToast("Preencha todos os campos obrigatórios.", "aviso");
+        return;
+      }
+
+      const btn = document.getElementById("btn-salvar");
+      btn.textContent = "Salvando...";
+      btn.disabled = true;
+
+      try {
+        const dadosContrato = {
+          clienteId, equipamentoId: equipId,
+          nomeCliente, nomeEquipamento: nomeEquip,
+          telefoneCliente: telCliente,
+          dataInicio:  Timestamp.fromDate(new Date(inicio + "T00:00:00")),
+          dataFim:     Timestamp.fromDate(new Date(fim    + "T23:59:59")),
+          dias, valorTotal: valor, caucao,
+          formaPagamento: pagamento,
+          obs:    document.getElementById("campo-obs").value.trim(),
+          status: "ativo",
+          dataCriacao: serverTimestamp(),
+        };
+
+        // 1. Salva o contrato
+        await addDoc(collection(db, "contratos"), dadosContrato);
+
+        // 2. AUTOMAÇÃO: Altera equipamento para "alugado"
+        await updateDoc(doc(db, "equipamentos", equipId), { status: "alugado" });
+
+        // 3. AUTOMAÇÃO: Cria lançamento no financeiro automaticamente
+        await addDoc(collection(db, "financeiro"), {
+          tipo:          "entrada",
+          valor,
+          data:          Timestamp.fromDate(new Date(inicio + "T00:00:00")),
+          formaPagamento: pagamento,
+          referencia:    `Contrato — ${nomeCliente} / ${nomeEquip}`,
+          clienteId,
+          dataCriacao:   serverTimestamp(),
+        });
+
+        showToast("Contrato criado! Equipamento marcado como alugado e entrada financeira registrada.", "sucesso");
+        fecharModal();
+        await iniciar();
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao salvar contrato.", "erro");
+      } finally {
+        btn.textContent = "💾 Salvar Contrato";
+        btn.disabled = false;
+      }
+    });
+
+    // ----------------------------------------
+    // FINALIZAR CONTRATO + automações
+    // ----------------------------------------
+    window.finalizar = async function(id) {
+      const c = todos.find(x => x.id === id);
+      if (!c) return;
+      if (!confirm(`Finalizar o contrato de ${c.nomeCliente}?\n\nIsso irá liberar o equipamento como "disponível".`)) return;
+
+      try {
+        // 1. Marca contrato como finalizado
+        await updateDoc(doc(db, "contratos", id), { status: "finalizado", dataFinalizacao: serverTimestamp() });
+
+        // 2. AUTOMAÇÃO: Libera o equipamento
+        await updateDoc(doc(db, "equipamentos", c.equipamentoId), { status: "disponivel" });
+
+        showToast("Contrato finalizado! Equipamento liberado.", "sucesso");
+        await iniciar();
+      } catch (err) {
+        showToast("Erro ao finalizar contrato.", "erro");
+      }
+    };
+
+    // ----------------------------------------
+    // Ver detalhes
+    // ----------------------------------------
+    window.verDetalhe = function(id) {
+      const c = todos.find(x => x.id === id);
+      if (!c) return;
+
+      document.getElementById("corpo-detalhe").innerHTML = `
+        <div class="detalhe-linha"><span class="detalhe-label">Cliente</span><span class="detalhe-valor">${c.nomeCliente || "—"}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Equipamento</span><span class="detalhe-valor">${c.nomeEquipamento || "—"}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Início</span><span class="detalhe-valor">${formatarData(c.dataInicio)}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Término</span><span class="detalhe-valor">${formatarData(c.dataFim)}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Duração</span><span class="detalhe-valor">${c.dias || "—"} dia(s)</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Valor total</span><span class="detalhe-valor texto-verde texto-negrito">${formatarMoeda(c.valorTotal)}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Caução</span><span class="detalhe-valor">${formatarMoeda(c.caucao)}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Pagamento</span><span class="detalhe-valor">${c.formaPagamento || "—"}</span></div>
+        <div class="detalhe-linha"><span class="detalhe-label">Status</span><span class="detalhe-valor">${badgeContrato(c.status)}</span></div>
+        ${c.obs ? `<div class="detalhe-linha"><span class="detalhe-label">Obs.</span><span class="detalhe-valor">${c.obs}</span></div>` : ""}
+      `;
+
+      const linkWhats = gerarLinkWhatsApp({
+        nomeCliente: c.nomeCliente,
+        equipamento: c.nomeEquipamento,
+        dataInicio:  formatarData(c.dataInicio),
+        dataFim:     formatarData(c.dataFim),
+        valor:       formatarMoeda(c.valorTotal),
+        telefone:    c.telefoneCliente || "",
+      });
+
+      document.getElementById("rodape-detalhe").innerHTML = `
+        <a href="${linkWhats}" target="_blank" class="btn-secundario">💬 Enviar WhatsApp</a>
+        ${c.status !== "finalizado"
+          ? `<button class="btn-primario" style="width:auto" onclick="finalizar('${c.id}'); document.getElementById('modal-detalhe').classList.remove('aberto')">✅ Finalizar</button>`
+          : ""}
+      `;
+
+      document.getElementById("modal-detalhe").classList.add("aberto");
+    };
+
+    document.getElementById("btn-fechar-detalhe").addEventListener("click", () => {
+      document.getElementById("modal-detalhe").classList.remove("aberto");
+    });
+
+    // ----------------------------------------
+    // WhatsApp rápido
+    // ----------------------------------------
+    window.msgWhats = function(id) {
+      const c = todos.find(x => x.id === id);
+      if (!c) return;
+      const link = gerarLinkWhatsApp({
+        nomeCliente: c.nomeCliente,
+        equipamento: c.nomeEquipamento,
+        dataInicio:  formatarData(c.dataInicio),
+        dataFim:     formatarData(c.dataFim),
+        valor:       formatarMoeda(c.valorTotal),
+        telefone:    c.telefoneCliente || "",
+      });
+      window.open(link, "_blank");
+    };
+
+    // ----------------------------------------
+    // Excluir
+    // ----------------------------------------
+    window.excluir = async function(id) {
+      const c = todos.find(x => x.id === id);
+      if (!confirm(`Excluir o contrato de "${c?.nomeCliente}"?`)) return;
+      try {
+        await deleteDoc(doc(db, "contratos", id));
+        showToast("Contrato excluído.", "sucesso");
+        await iniciar();
+      } catch (err) {
+        showToast("Erro ao excluir.", "erro");
+      }
+    };
+
+    iniciar();
+  </script>
+
+</body>
+</html>

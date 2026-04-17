@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltRent — Equipamentos</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
+    <div class="sidebar-secao">Principal</div>
+    <nav>
+      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
+      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
+      <a href="equipamentos.html" class="ativo"><span class="icone">🛵</span> Equipamentos</a>
+      <a href="contratos.html"><span class="icone">📋</span> Contratos</a>
+    </nav>
+    <div class="sidebar-secao">Financeiro</div>
+    <nav>
+      <a href="financeiro.html"><span class="icone">💰</span> Financeiro</a>
+      <a href="orcamentos.html"><span class="icone">📝</span> Orçamentos</a>
+      <a href="notas.html"><span class="icone">📄</span> Notas Promissórias</a>
+    </nav>
+    <div class="sidebar-rodape">
+      <button id="btn-logout">🚪 Sair</button>
+    </div>
+  </aside>
+
+  <main class="conteudo">
+
+    <div class="pagina-header">
+      <div>
+        <h1 class="pagina-titulo">Equipamentos</h1>
+        <p class="pagina-subtitulo" id="total-equip">Carregando...</p>
+      </div>
+      <button class="btn-primario" style="width:auto" id="btn-novo">➕ Novo Equipamento</button>
+    </div>
+
+    <!-- Filtros de status -->
+    <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+      <button class="btn-filtro ativo" data-filtro="todos">Todos</button>
+      <button class="btn-filtro" data-filtro="disponivel">🟢 Disponíveis</button>
+      <button class="btn-filtro" data-filtro="alugado">🟡 Alugados</button>
+      <button class="btn-filtro" data-filtro="manutencao">🔧 Manutenção</button>
+    </div>
+
+    <div class="tabela-wrapper">
+      <div class="tabela-header">
+        <h3>Lista de Equipamentos</h3>
+        <input type="text" class="busca-input" id="busca-equip" placeholder="🔍 Buscar por modelo ou código...">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Marca / Modelo</th>
+            <th>Status</th>
+            <th>Diária</th>
+            <th>Mensal</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-equip">
+          <tr><td colspan="7"><div class="estado-vazio"><div class="icone-vazio">⏳</div><p>Carregando...</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-equip">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-titulo">Novo Equipamento</h3>
+        <button class="modal-fechar" id="btn-fechar">✕</button>
+      </div>
+      <div class="modal-corpo">
+        <form id="form-equip">
+          <div class="campos-grid">
+
+            <div class="campo">
+              <label>Tipo *</label>
+              <select id="campo-tipo" required>
+                <option value="">Selecione...</option>
+                <option value="Scooter Elétrica">Scooter Elétrica</option>
+                <option value="Bike Elétrica">Bike Elétrica</option>
+                <option value="Patinete Elétrico">Patinete Elétrico</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label>Código interno *</label>
+              <input type="text" id="campo-codigo" placeholder="Ex: SC-001" required>
+            </div>
+
+            <div class="campo">
+              <label>Marca *</label>
+              <input type="text" id="campo-marca" placeholder="Ex: Voltz" required>
+            </div>
+
+            <div class="campo">
+              <label>Modelo *</label>
+              <input type="text" id="campo-modelo" placeholder="Ex: EV1" required>
+            </div>
+
+            <div class="campo">
+              <label>Ano</label>
+              <input type="number" id="campo-ano" placeholder="Ex: 2023" min="2000" max="2030">
+            </div>
+
+            <div class="campo">
+              <label>Cor</label>
+              <input type="text" id="campo-cor" placeholder="Ex: Preto">
+            </div>
+
+            <div class="campo">
+              <label>Valor da Diária (R$) *</label>
+              <input type="number" id="campo-diaria" placeholder="0,00" step="0.01" min="0" required>
+            </div>
+
+            <div class="campo">
+              <label>Valor Mensal (R$) *</label>
+              <input type="number" id="campo-mensal" placeholder="0,00" step="0.01" min="0" required>
+            </div>
+
+            <div class="campo">
+              <label>Status *</label>
+              <select id="campo-status" required>
+                <option value="disponivel">🟢 Disponível</option>
+                <option value="alugado">🟡 Alugado</option>
+                <option value="manutencao">🔧 Manutenção</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label>Número de série</label>
+              <input type="text" id="campo-serie" placeholder="Opcional">
+            </div>
+
+            <div class="campo campo-largo">
+              <label>Observações</label>
+              <textarea id="campo-obs" placeholder="Detalhes adicionais, acessórios inclusos..."></textarea>
+            </div>
+
+          </div>
+          <input type="hidden" id="campo-id">
+        </form>
+      </div>
+      <div class="modal-rodape">
+        <button class="btn-secundario" id="btn-cancelar">Cancelar</button>
+        <button class="btn-primario" id="btn-salvar" style="width:auto">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .btn-filtro {
+      padding: 7px 16px;
+      border: 1px solid var(--cinza-medio);
+      border-radius: 99px;
+      background: white;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--texto-suave);
+    }
+    .btn-filtro:hover { background: var(--cinza-claro); }
+    .btn-filtro.ativo {
+      background: var(--verde);
+      color: white;
+      border-color: var(--verde);
+      font-weight: 600;
+    }
+  </style>
+
+  <script type="module">
+    import { protegerPagina, logout } from "./js/auth.js";
+    import { db } from "./js/firebase-config.js";
+    import { showToast, formatarMoeda, badgeEquipamento } from "./js/utils.js";
+    import {
+      collection, getDocs, addDoc, updateDoc, deleteDoc,
+      doc, orderBy, query, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    protegerPagina();
+    document.getElementById("btn-logout").addEventListener("click", logout);
+
+    const colEquip = collection(db, "equipamentos");
+    let todos = [];
+    let filtroAtual = "todos";
+
+    async function carregar() {
+      try {
+        const snap = await getDocs(query(colEquip, orderBy("codigo")));
+        todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderizar();
+        atualizarContador();
+      } catch (err) {
+        showToast("Erro ao carregar equipamentos.", "erro");
+      }
+    }
+
+    function atualizarContador() {
+      const disp = todos.filter(e => e.status === "disponivel").length;
+      const alug = todos.filter(e => e.status === "alugado").length;
+      const man  = todos.filter(e => e.status === "manutencao").length;
+      document.getElementById("total-equip").textContent =
+        `${todos.length} equipamento(s) · ${disp} disponível · ${alug} alugado · ${man} manutenção`;
+    }
+
+    function renderizar() {
+      const busca = document.getElementById("busca-equip").value.toLowerCase();
+      let lista = todos;
+
+      if (filtroAtual !== "todos") lista = lista.filter(e => e.status === filtroAtual);
+      if (busca) lista = lista.filter(e =>
+        (e.modelo  || "").toLowerCase().includes(busca) ||
+        (e.codigo  || "").toLowerCase().includes(busca) ||
+        (e.marca   || "").toLowerCase().includes(busca)
+      );
+
+      const tbody = document.getElementById("tabela-equip");
+      if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="estado-vazio"><div class="icone-vazio">🛵</div><p>Nenhum equipamento encontrado.</p></div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = lista.map(e => `
+        <tr>
+          <td><strong>${e.codigo || "—"}</strong></td>
+          <td>${e.tipo || "—"}</td>
+          <td>
+            <strong>${e.modelo || "—"}</strong>
+            <br><span class="texto-pequeno texto-cinza">${e.marca || ""} ${e.ano ? "· " + e.ano : ""}</span>
+          </td>
+          <td>${badgeEquipamento(e.status)}</td>
+          <td>${formatarMoeda(e.diaria)}</td>
+          <td>${formatarMoeda(e.mensal)}</td>
+          <td>
+            <div class="td-acoes">
+              <button class="btn-icon" title="Editar" onclick="editar('${e.id}')">✏️</button>
+              <button class="btn-icon" title="Alterar status" onclick="alterarStatus('${e.id}', '${e.status}')">🔄</button>
+              <button class="btn-icon btn-perigo" title="Excluir" onclick="excluir('${e.id}', '${e.modelo}')">🗑️</button>
+            </div>
+          </td>
+        </tr>`).join("");
+    }
+
+    // Filtros
+    document.querySelectorAll(".btn-filtro").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".btn-filtro").forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+        filtroAtual = btn.dataset.filtro;
+        renderizar();
+      });
+    });
+
+    document.getElementById("busca-equip").addEventListener("input", renderizar);
+
+    // Modal
+    function abrirModal(titulo = "Novo Equipamento") {
+      document.getElementById("modal-titulo").textContent = titulo;
+      document.getElementById("modal-equip").classList.add("aberto");
+    }
+
+    function fecharModal() {
+      document.getElementById("modal-equip").classList.remove("aberto");
+      document.getElementById("form-equip").reset();
+      document.getElementById("campo-id").value = "";
+    }
+
+    document.getElementById("btn-novo").addEventListener("click", () => abrirModal());
+    document.getElementById("btn-fechar").addEventListener("click", fecharModal);
+    document.getElementById("btn-cancelar").addEventListener("click", fecharModal);
+    document.getElementById("modal-equip").addEventListener("click", e => { if (e.target === e.currentTarget) fecharModal(); });
+
+    // Salvar
+    document.getElementById("btn-salvar").addEventListener("click", async () => {
+      const id = document.getElementById("campo-id").value;
+      const tipo   = document.getElementById("campo-tipo").value;
+      const codigo = document.getElementById("campo-codigo").value.trim();
+      const marca  = document.getElementById("campo-marca").value.trim();
+      const modelo = document.getElementById("campo-modelo").value.trim();
+      const diaria = parseFloat(document.getElementById("campo-diaria").value) || 0;
+      const mensal = parseFloat(document.getElementById("campo-mensal").value) || 0;
+
+      if (!tipo || !codigo || !marca || !modelo) {
+        showToast("Preencha os campos obrigatórios.", "aviso");
+        return;
+      }
+
+      const dados = {
+        tipo, codigo, marca, modelo, diaria, mensal,
+        ano:    document.getElementById("campo-ano").value,
+        cor:    document.getElementById("campo-cor").value.trim(),
+        serie:  document.getElementById("campo-serie").value.trim(),
+        status: document.getElementById("campo-status").value,
+        obs:    document.getElementById("campo-obs").value.trim(),
+      };
+
+      const btn = document.getElementById("btn-salvar");
+      btn.textContent = "Salvando...";
+      btn.disabled = true;
+
+      try {
+        if (id) {
+          await updateDoc(doc(db, "equipamentos", id), dados);
+          showToast("Equipamento atualizado!", "sucesso");
+        } else {
+          dados.dataCriacao = serverTimestamp();
+          await addDoc(colEquip, dados);
+          showToast("Equipamento cadastrado!", "sucesso");
+        }
+        fecharModal();
+        await carregar();
+      } catch (err) {
+        showToast("Erro ao salvar.", "erro");
+      } finally {
+        btn.textContent = "💾 Salvar";
+        btn.disabled = false;
+      }
+    });
+
+    // Editar
+    window.editar = function(id) {
+      const e = todos.find(x => x.id === id);
+      if (!e) return;
+      document.getElementById("campo-id").value      = e.id;
+      document.getElementById("campo-tipo").value    = e.tipo    || "";
+      document.getElementById("campo-codigo").value  = e.codigo  || "";
+      document.getElementById("campo-marca").value   = e.marca   || "";
+      document.getElementById("campo-modelo").value  = e.modelo  || "";
+      document.getElementById("campo-ano").value     = e.ano     || "";
+      document.getElementById("campo-cor").value     = e.cor     || "";
+      document.getElementById("campo-diaria").value  = e.diaria  || "";
+      document.getElementById("campo-mensal").value  = e.mensal  || "";
+      document.getElementById("campo-status").value  = e.status  || "disponivel";
+      document.getElementById("campo-serie").value   = e.serie   || "";
+      document.getElementById("campo-obs").value     = e.obs     || "";
+      abrirModal("Editar Equipamento");
+    };
+
+    // Alterar status rapidamente
+    window.alterarStatus = async function(id, statusAtual) {
+      const opcoes = { disponivel: "alugado", alugado: "manutencao", manutencao: "disponivel" };
+      const labels = { disponivel: "Disponível", alugado: "Alugado", manutencao: "Manutenção" };
+      const novoStatus = opcoes[statusAtual] || "disponivel";
+      if (!confirm(`Alterar status para "${labels[novoStatus]}"?`)) return;
+      try {
+        await updateDoc(doc(db, "equipamentos", id), { status: novoStatus });
+        showToast(`Status alterado para ${labels[novoStatus]}!`, "sucesso");
+        await carregar();
+      } catch (err) {
+        showToast("Erro ao alterar status.", "erro");
+      }
+    };
+
+    // Excluir
+    window.excluir = async function(id, nome) {
+      if (!confirm(`Excluir o equipamento "${nome}"?`)) return;
+      try {
+        await deleteDoc(doc(db, "equipamentos", id));
+        showToast("Equipamento excluído.", "sucesso");
+        await carregar();
+      } catch (err) {
+        showToast("Erro ao excluir.", "erro");
+      }
+    };
+
+    carregar();
+  </script>
+
+</body>
+</html>

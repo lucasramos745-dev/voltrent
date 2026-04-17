@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltRent — Financeiro</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span>🛵 VoltRent</span></div>
+    <div class="sidebar-secao">Principal</div>
+    <nav>
+      <a href="dashboard.html"><span class="icone">📊</span> Dashboard</a>
+      <a href="clientes.html"><span class="icone">👥</span> Clientes</a>
+      <a href="equipamentos.html"><span class="icone">🛵</span> Equipamentos</a>
+      <a href="contratos.html"><span class="icone">📋</span> Contratos</a>
+    </nav>
+    <div class="sidebar-secao">Financeiro</div>
+    <nav>
+      <a href="financeiro.html" class="ativo"><span class="icone">💰</span> Financeiro</a>
+      <a href="orcamentos.html"><span class="icone">📝</span> Orçamentos</a>
+      <a href="notas.html"><span class="icone">📄</span> Notas Promissórias</a>
+    </nav>
+    <div class="sidebar-rodape">
+      <button id="btn-logout">🚪 Sair</button>
+    </div>
+  </aside>
+
+  <main class="conteudo">
+
+    <div class="pagina-header">
+      <div>
+        <h1 class="pagina-titulo">Financeiro</h1>
+        <p class="pagina-subtitulo">Controle de entradas e saídas</p>
+      </div>
+      <button class="btn-primario" style="width:auto" id="btn-novo">➕ Novo Lançamento</button>
+    </div>
+
+    <!-- Cards de resumo -->
+    <div class="stats-grid" style="margin-bottom:28px;">
+      <div class="stat-card verde">
+        <div class="stat-icone">💚</div>
+        <div class="stat-label">Entradas do mês</div>
+        <div class="stat-valor" id="total-entradas">—</div>
+      </div>
+      <div class="stat-card vermelho">
+        <div class="stat-icone">🔴</div>
+        <div class="stat-label">Saídas do mês</div>
+        <div class="stat-valor" id="total-saidas">—</div>
+      </div>
+      <div class="stat-card azul">
+        <div class="stat-icone">💰</div>
+        <div class="stat-label">Saldo do mês</div>
+        <div class="stat-valor" id="saldo-mes">—</div>
+      </div>
+      <div class="stat-card amarelo">
+        <div class="stat-icone">📊</div>
+        <div class="stat-label">Total de lançamentos</div>
+        <div class="stat-valor" id="total-lancamentos">—</div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center;">
+      <button class="btn-filtro ativo" data-filtro="todos">Todos</button>
+      <button class="btn-filtro" data-filtro="entrada">💚 Entradas</button>
+      <button class="btn-filtro" data-filtro="saida">🔴 Saídas</button>
+
+      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+        <label style="font-size:13px; color:var(--cinza);">Mês:</label>
+        <input type="month" id="filtro-mes" style="width:160px; padding:7px 10px; font-size:13px;" >
+      </div>
+    </div>
+
+    <div class="tabela-wrapper">
+      <div class="tabela-header">
+        <h3>Lançamentos</h3>
+        <input type="text" class="busca-input" id="busca" placeholder="🔍 Buscar por descrição...">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Referência / Descrição</th>
+            <th>Forma de Pagamento</th>
+            <th>Valor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-fin">
+          <tr><td colspan="6"><div class="estado-vazio"><div class="icone-vazio">⏳</div><p>Carregando...</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- MODAL NOVO LANÇAMENTO -->
+  <div class="modal-overlay" id="modal-fin">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-titulo">Novo Lançamento</h3>
+        <button class="modal-fechar" id="btn-fechar">✕</button>
+      </div>
+      <div class="modal-corpo">
+        <form id="form-fin">
+          <div class="campos-grid">
+
+            <div class="campo">
+              <label>Tipo *</label>
+              <select id="campo-tipo" required>
+                <option value="">Selecione...</option>
+                <option value="entrada">💚 Entrada</option>
+                <option value="saida">🔴 Saída</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label>Data *</label>
+              <input type="date" id="campo-data" required>
+            </div>
+
+            <div class="campo">
+              <label>Valor (R$) *</label>
+              <input type="number" id="campo-valor" step="0.01" min="0.01" placeholder="0,00" required>
+            </div>
+
+            <div class="campo">
+              <label>Forma de pagamento *</label>
+              <select id="campo-pagamento" required>
+                <option value="">Selecione...</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="PIX">PIX</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+                <option value="Transferência">Transferência</option>
+                <option value="Boleto">Boleto</option>
+              </select>
+            </div>
+
+            <div class="campo campo-largo">
+              <label>Referência / Descrição *</label>
+              <input type="text" id="campo-ref" placeholder="Ex: Contrato João, Manutenção scooter SC-001, Aluguel do galpão..." required>
+            </div>
+
+            <div class="campo campo-largo">
+              <label>Observações</label>
+              <textarea id="campo-obs" placeholder="Detalhes adicionais..."></textarea>
+            </div>
+
+          </div>
+          <input type="hidden" id="campo-id">
+        </form>
+      </div>
+      <div class="modal-rodape">
+        <button class="btn-secundario" id="btn-cancelar">Cancelar</button>
+        <button class="btn-primario" id="btn-salvar" style="width:auto">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .btn-filtro {
+      padding: 7px 16px; border: 1px solid var(--cinza-medio);
+      border-radius: 99px; background: white; font-size: 13px;
+      cursor: pointer; transition: all .15s; color: var(--texto-suave);
+    }
+    .btn-filtro:hover { background: var(--cinza-claro); }
+    .btn-filtro.ativo { background: var(--verde); color: white; border-color: var(--verde); font-weight: 600; }
+
+    .valor-entrada { color: var(--verde); font-weight: 700; }
+    .valor-saida   { color: var(--vermelho); font-weight: 700; }
+
+    .tipo-entrada { background:#dcfce7; color:#166534; display:inline-block; padding:3px 10px; border-radius:99px; font-size:12px; font-weight:600; }
+    .tipo-saida   { background:#fee2e2; color:#991b1b; display:inline-block; padding:3px 10px; border-radius:99px; font-size:12px; font-weight:600; }
+  </style>
+
+  <script type="module">
+    import { protegerPagina, logout } from "./js/auth.js";
+    import { db } from "./js/firebase-config.js";
+    import { showToast, formatarMoeda, formatarData } from "./js/utils.js";
+    import {
+      collection, getDocs, addDoc, updateDoc, deleteDoc,
+      doc, orderBy, query, serverTimestamp, Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    protegerPagina();
+    document.getElementById("btn-logout").addEventListener("click", logout);
+
+    const colFin = collection(db, "financeiro");
+    let todos = [];
+    let filtroAtual = "todos";
+
+    // Define mês atual no filtro
+    const hoje = new Date();
+    const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}`;
+    document.getElementById("filtro-mes").value = mesAtual;
+
+    // ----------------------------------------
+    // Carrega lançamentos
+    // ----------------------------------------
+    async function carregar() {
+      try {
+        const snap = await getDocs(query(colFin, orderBy("data", "desc")));
+        todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        atualizarCards();
+        renderizar();
+      } catch (err) {
+        showToast("Erro ao carregar financeiro.", "erro");
+      }
+    }
+
+    // ----------------------------------------
+    // Atualiza cards de resumo (mês atual)
+    // ----------------------------------------
+    function atualizarCards() {
+      const mesFiltro = document.getElementById("filtro-mes").value;
+      const [ano, mes] = mesFiltro.split("-").map(Number);
+      const inicio = new Date(ano, mes - 1, 1);
+      const fim    = new Date(ano, mes, 0, 23, 59, 59);
+
+      const doMes = todos.filter(l => {
+        const d = l.data?.toDate ? l.data.toDate() : new Date(l.data);
+        return d >= inicio && d <= fim;
+      });
+
+      const entradas = doMes.filter(l => l.tipo === "entrada").reduce((s, l) => s + (l.valor || 0), 0);
+      const saidas   = doMes.filter(l => l.tipo === "saida").reduce((s, l) => s + (l.valor || 0), 0);
+      const saldo    = entradas - saidas;
+
+      document.getElementById("total-entradas").textContent    = formatarMoeda(entradas);
+      document.getElementById("total-saidas").textContent      = formatarMoeda(saidas);
+      document.getElementById("saldo-mes").textContent         = formatarMoeda(saldo);
+      document.getElementById("saldo-mes").style.color         = saldo >= 0 ? "var(--verde)" : "var(--vermelho)";
+      document.getElementById("total-lancamentos").textContent = todos.length;
+    }
+
+    // ----------------------------------------
+    // Renderiza tabela com filtros
+    // ----------------------------------------
+    function renderizar() {
+      const busca     = document.getElementById("busca").value.toLowerCase();
+      const mesFiltro = document.getElementById("filtro-mes").value;
+      const [ano, mes] = mesFiltro.split("-").map(Number);
+      const inicio = new Date(ano, mes - 1, 1);
+      const fim    = new Date(ano, mes, 0, 23, 59, 59);
+
+      let lista = todos.filter(l => {
+        const d = l.data?.toDate ? l.data.toDate() : new Date(l.data);
+        return d >= inicio && d <= fim;
+      });
+
+      if (filtroAtual !== "todos") lista = lista.filter(l => l.tipo === filtroAtual);
+      if (busca) lista = lista.filter(l =>
+        (l.referencia || "").toLowerCase().includes(busca) ||
+        (l.obs        || "").toLowerCase().includes(busca)
+      );
+
+      const tbody = document.getElementById("tabela-fin");
+      if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="estado-vazio"><div class="icone-vazio">💰</div><p>Nenhum lançamento encontrado.</p></div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = lista.map(l => `
+        <tr>
+          <td style="font-size:13px;">${formatarData(l.data)}</td>
+          <td>
+            <span class="tipo-${l.tipo}">
+              ${l.tipo === "entrada" ? "💚 Entrada" : "🔴 Saída"}
+            </span>
+          </td>
+          <td>
+            <strong>${l.referencia || "—"}</strong>
+            ${l.obs ? `<br><span class="texto-pequeno texto-cinza">${l.obs}</span>` : ""}
+          </td>
+          <td style="font-size:13px;">${l.formaPagamento || "—"}</td>
+          <td class="valor-${l.tipo}">${formatarMoeda(l.valor)}</td>
+          <td>
+            <div class="td-acoes">
+              <button class="btn-icon" title="Editar" onclick="editar('${l.id}')">✏️</button>
+              <button class="btn-icon btn-perigo" title="Excluir" onclick="excluir('${l.id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>`).join("");
+    }
+
+    // Filtros e busca
+    document.querySelectorAll(".btn-filtro").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".btn-filtro").forEach(b => b.classList.remove("ativo"));
+        btn.classList.add("ativo");
+        filtroAtual = btn.dataset.filtro;
+        renderizar();
+      });
+    });
+
+    document.getElementById("busca").addEventListener("input", renderizar);
+    document.getElementById("filtro-mes").addEventListener("change", () => {
+      atualizarCards();
+      renderizar();
+    });
+
+    // ----------------------------------------
+    // Modal
+    // ----------------------------------------
+    function abrirModal(titulo = "Novo Lançamento") {
+      document.getElementById("modal-titulo").textContent = titulo;
+      document.getElementById("modal-fin").classList.add("aberto");
+      document.getElementById("campo-data").value = new Date().toISOString().split("T")[0];
+    }
+
+    function fecharModal() {
+      document.getElementById("modal-fin").classList.remove("aberto");
+      document.getElementById("form-fin").reset();
+      document.getElementById("campo-id").value = "";
+    }
+
+    document.getElementById("btn-novo").addEventListener("click", () => abrirModal());
+    document.getElementById("btn-fechar").addEventListener("click", fecharModal);
+    document.getElementById("btn-cancelar").addEventListener("click", fecharModal);
+    document.getElementById("modal-fin").addEventListener("click", e => { if (e.target === e.currentTarget) fecharModal(); });
+
+    // ----------------------------------------
+    // Salvar
+    // ----------------------------------------
+    document.getElementById("btn-salvar").addEventListener("click", async () => {
+      const id        = document.getElementById("campo-id").value;
+      const tipo      = document.getElementById("campo-tipo").value;
+      const dataVal   = document.getElementById("campo-data").value;
+      const valor     = parseFloat(document.getElementById("campo-valor").value) || 0;
+      const pagamento = document.getElementById("campo-pagamento").value;
+      const ref       = document.getElementById("campo-ref").value.trim();
+
+      if (!tipo || !dataVal || !valor || !pagamento || !ref) {
+        showToast("Preencha todos os campos obrigatórios.", "aviso");
+        return;
+      }
+
+      const dados = {
+        tipo, valor,
+        data:           Timestamp.fromDate(new Date(dataVal + "T12:00:00")),
+        formaPagamento: pagamento,
+        referencia:     ref,
+        obs:            document.getElementById("campo-obs").value.trim(),
+      };
+
+      const btn = document.getElementById("btn-salvar");
+      btn.textContent = "Salvando...";
+      btn.disabled = true;
+
+      try {
+        if (id) {
+          await updateDoc(doc(db, "financeiro", id), dados);
+          showToast("Lançamento atualizado!", "sucesso");
+        } else {
+          dados.dataCriacao = serverTimestamp();
+          await addDoc(colFin, dados);
+          showToast("Lançamento registrado!", "sucesso");
+        }
+        fecharModal();
+        await carregar();
+      } catch (err) {
+        showToast("Erro ao salvar lançamento.", "erro");
+      } finally {
+        btn.textContent = "💾 Salvar";
+        btn.disabled = false;
+      }
+    });
+
+    // ----------------------------------------
+    // Editar
+    // ----------------------------------------
+    window.editar = function(id) {
+      const l = todos.find(x => x.id === id);
+      if (!l) return;
+      const data = l.data?.toDate ? l.data.toDate() : new Date(l.data);
+      const dataStr = data.toISOString().split("T")[0];
+
+      document.getElementById("campo-id").value        = l.id;
+      document.getElementById("campo-tipo").value      = l.tipo       || "";
+      document.getElementById("campo-data").value      = dataStr;
+      document.getElementById("campo-valor").value     = l.valor      || "";
+      document.getElementById("campo-pagamento").value = l.formaPagamento || "";
+      document.getElementById("campo-ref").value       = l.referencia || "";
+      document.getElementById("campo-obs").value       = l.obs        || "";
+
+      abrirModal("Editar Lançamento");
+    };
+
+    // ----------------------------------------
+    // Excluir
+    // ----------------------------------------
+    window.excluir = async function(id) {
+      if (!confirm("Excluir este lançamento?")) return;
+      try {
+        await deleteDoc(doc(db, "financeiro", id));
+        showToast("Lançamento excluído.", "sucesso");
+        await carregar();
+      } catch (err) {
+        showToast("Erro ao excluir.", "erro");
+      }
+    };
+
+    carregar();
+  </script>
+
+</body>
+</html>
